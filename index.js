@@ -21,15 +21,15 @@ const adminJs = new AdminJS({
   resource: Recluta,
   options: {
     properties: {
+      // 🟩 La fecha se guarda como STRING
       fechaInicio: {
-        type: 'date',
-        props: {
-          dateFormat: 'dd-MMM-yyyy',
-        }
+        type: 'string',
       },
+
+      // 🟩 Multiselect de cursos
       cursos: {
         type: 'string',
-        isArray: true,   // 👈 permite seleccionar varios
+        isArray: true,
         availableValues: [
           { value: 'Cibi', label: 'Cibi' },
           { value: 'Medico', label: 'Médico' },
@@ -40,16 +40,54 @@ const adminJs = new AdminJS({
           { value: 'Orientacion', label: 'Orientación' },
         ]
       }
+    },
+
+    // 🟩 Hooks para formatear la fecha ANTES de guardar
+    actions: {
+      new: {
+        before: async (request) => {
+          if (request.payload && request.payload.fechaInicio) {
+            const raw = request.payload.fechaInicio;
+            const date = new Date(raw);
+
+            const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+
+            request.payload.fechaInicio = `${day}-${month}-${year}`;
+          }
+          return request;
+        }
+      },
+
+      edit: {
+        before: async (request) => {
+          if (request.payload && request.payload.fechaInicio) {
+            const raw = request.payload.fechaInicio;
+            const date = new Date(raw);
+
+            const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+
+            request.payload.fechaInicio = `${day}-${month}-${year}`;
+          }
+          return request;
+        }
+      }
     }
   }
 }
+
 
   ],
 
   rootPath: '/admin',
 
   branding: {
-    companyName: 'Clan Milsim',
+    companyName: 'Reclutas - Clan F.E.A.R',
     softwareBrothers: false,
 
     // 🟩 TU LOGO
