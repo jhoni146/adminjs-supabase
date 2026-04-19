@@ -45,7 +45,40 @@ const adminJs = new AdminJS({
   branding: {
     companyName: 'Clan Milsim',
     softwareBrothers: false,
+
+    // 🟩 TU LOGO
+    logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
+
+    // 🟩 OPCIONAL: FAVICON
+    favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
+
+    // 🟩 TEMA MILITAR
+    theme: {
+      colors: {
+        primary100: '#1b2a16',   // verde militar oscuro
+        primary80: '#2d3f21',
+        primary60: '#3f5a2c',
+        primary40: '#577a3c',
+        primary20: '#7f9f5b',
+
+        accent: '#c2b280',       // color arena
+        hoverBg: '#2d3f21',
+        filterBg: '#1b2a16',
+
+        bg: '#0f140c',           // fondo negro militar
+        defaultText: '#e0e0e0',  // texto gris claro
+        lightText: '#cfcfcf',
+        border: '#3f5a2c',
+      },
+
+      // 🟩 Tipografía estilo militar
+      fonts: {
+        base: '"Roboto Condensed", sans-serif',
+        headings: '"Roboto Condensed", sans-serif',
+      }
+    }
   },
+
 
   locale: {
     language: 'es',
