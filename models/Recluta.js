@@ -15,7 +15,7 @@ const Recluta = sequelize.define('Recluta', {
     allowNull: false,
   },
 cursos: {
-  type: DataTypes.STRING,
+  type: DataTypes.JSON,
   allowNull: true,
 }
 });
