@@ -14,10 +14,10 @@ const Recluta = sequelize.define('Recluta', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  cursos: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  }
+cursos: {
+  type: DataTypes.STRING,
+  allowNull: true,
+}
 });
 
 export default Recluta;
