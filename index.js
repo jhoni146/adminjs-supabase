@@ -17,13 +17,36 @@ AdminJS.registerAdapter({
 // Configuración AdminJS
 const adminJs = new AdminJS({
   resources: [
-    { resource: Recluta },
+{
+  resource: Recluta,
+  options: {
+    properties: {
+      cursos: {
+        type: 'string',
+        isArray: true,   // 👈 permite seleccionar varios
+        availableValues: [
+          { value: 'Cibi', label: 'Cibi' },
+          { value: 'Medico', label: 'Médico' },
+          { value: 'Formaciones', label: 'Formaciones' },
+          { value: 'Mout', label: 'MOUT' },
+          { value: 'Cqb', label: 'CQB' },
+          { value: 'Comunicaciones', label: 'Comunicaciones' },
+          { value: 'Orientacion', label: 'Orientación' },
+        ]
+      }
+    }
+  }
+}
+
   ],
+
   rootPath: '/admin',
+
   branding: {
     companyName: 'Clan Milsim',
     softwareBrothers: false,
   },
+
   locale: {
     language: 'es',
     translations: {
@@ -39,10 +62,14 @@ const adminJs = new AdminJS({
             cursos: 'Cursos',
           }
         }
+      },
+      messages: {
+        loginWelcome: 'Panel del Clan Milsim',
       }
     }
   }
 });
+
 
 
 

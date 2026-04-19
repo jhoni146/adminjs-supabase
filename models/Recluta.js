@@ -15,8 +15,8 @@ const Recluta = sequelize.define('Recluta', {
     allowNull: false,
   },
   cursos: {
-    type: DataTypes.TEXT,
-    allowNull: true, // puedes poner lista separada por comas
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 
