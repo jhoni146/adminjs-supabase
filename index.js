@@ -22,13 +22,11 @@ const adminJs = new AdminJS({
   options: {
     properties: {
       fechaInicio: {
-      type: 'date',
-      components: {
-        list: AdminJS.bundle('./components/date-format.jsx'),
-        show: AdminJS.bundle('./components/date-format.jsx'),
-      }
-    },
-
+        type: 'date',
+        props: {
+          dateFormat: 'dd-MMM-yyyy',
+        }
+      },
       cursos: {
         type: 'string',
         isArray: true,   // 👈 permite seleccionar varios
