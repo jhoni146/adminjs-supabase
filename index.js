@@ -4,10 +4,7 @@ import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
 import AdminJSSequelize from '@adminjs/sequelize';
 import { sequelize } from './db.js';
-import User from './models/User.js';
-import Member from './models/Member.js';
-import Course from './models/Course.js';
-import MemberCourse from './models/MemberCourse.js';
+import Recluta from './models/Recluta.js';
 
 const app = express();
 
@@ -20,15 +17,33 @@ AdminJS.registerAdapter({
 // Configuración AdminJS
 const adminJs = new AdminJS({
   resources: [
-    { resource: Member },
-    { resource: Course },
-    { resource: MemberCourse },
+    { resource: Recluta },
   ],
   rootPath: '/admin',
   branding: {
     companyName: 'Clan Milsim',
+    softwareBrothers: false,
   },
+  locale: {
+    language: 'es',
+    translations: {
+      labels: {
+        Recluta: 'Reclutas',
+      },
+      resources: {
+        Recluta: {
+          properties: {
+            nombre: 'Nombre',
+            plataforma: 'Plataforma',
+            fechaInicio: 'Fecha de inicio',
+            cursos: 'Cursos',
+          }
+        }
+      }
+    }
+  }
 });
+
 
 
 // Autenticación
