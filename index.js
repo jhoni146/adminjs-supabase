@@ -5,6 +5,9 @@ import AdminJSExpress from '@adminjs/express';
 import AdminJSSequelize from '@adminjs/sequelize';
 import { sequelize } from './db.js';
 import User from './models/User.js';
+import Member from './models/Member.js';
+import Course from './models/Course.js';
+import MemberCourse from './models/MemberCourse.js';
 
 const app = express();
 
@@ -17,13 +20,16 @@ AdminJS.registerAdapter({
 // Configuración AdminJS
 const adminJs = new AdminJS({
   resources: [
-    { resource: User },
+    { resource: Member },
+    { resource: Course },
+    { resource: MemberCourse },
   ],
   rootPath: '/admin',
   branding: {
-    companyName: 'Mi Panel Admin',
+    companyName: 'Clan Milsim',
   },
 });
+
 
 // Autenticación
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
