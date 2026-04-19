@@ -5,6 +5,7 @@ import AdminJSExpress from '@adminjs/express';
 import AdminJSSequelize from '@adminjs/sequelize';
 import { sequelize } from './db.js';
 import Recluta from './models/Recluta.js';
+import Usuario from './models/Usuario.js';
 
 const app = express();
 
@@ -17,6 +18,14 @@ AdminJS.registerAdapter({
 // Configuración AdminJS
 const adminJs = new AdminJS({
   resources: [
+    {
+  resource: Usuario,
+  options: {
+    properties: {
+      password: { type: 'password' }
+    }
+  }
+},
 {
   resource: Recluta,
   options: {
@@ -153,14 +162,22 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
   {
     authenticate: async (email, password) => {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        return { email };
+      // Buscar usuario en la base de datos
+      const user = await Usuario.findOne({ where: { email } });
+      if (!user) return null;
+
+      // Comparación simple (sin encriptar)
+      if (user.password === password) {
+        return { email: user.email };
       }
+
       return null;
     },
+
     cookiePassword: process.env.ADMINJS_COOKIE_SECRET || 'cookie-secret',
   }
 );
+
 
 app.use(adminJs.options.rootPath, router);
 
