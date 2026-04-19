@@ -10,10 +10,10 @@ const Recluta = sequelize.define('Recluta', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  fechaInicio: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
+fechaInicio: {
+  type: DataTypes.STRING,
+  allowNull: false,
+},
 cursos: {
   type: DataTypes.JSON,
   allowNull: true,
