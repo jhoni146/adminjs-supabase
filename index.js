@@ -21,6 +21,14 @@ const adminJs = new AdminJS({
   resource: Recluta,
   options: {
     properties: {
+      fechaInicio: {
+      type: 'date',
+      components: {
+        list: AdminJS.bundle('./components/date-format.jsx'),
+        show: AdminJS.bundle('./components/date-format.jsx'),
+      }
+    },
+
       cursos: {
         type: 'string',
         isArray: true,   // 👈 permite seleccionar varios
@@ -64,11 +72,6 @@ const adminJs = new AdminJS({
         accent: '#c2b280',       // color arena
         hoverBg: '#2d3f21',
         filterBg: '#1b2a16',
-
-        bg: '#0f140c',           // fondo negro militar
-        defaultText: '#e0e0e0',  // texto gris claro
-        lightText: '#cfcfcf',
-        border: '#3f5a2c',
       },
 
       // 🟩 Tipografía estilo militar
