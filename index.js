@@ -12,12 +12,9 @@ import { ComponentLoader } from 'adminjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// 🟩 NUEVO SISTEMA DE COMPONENTES EN ADMINJS v7
 const componentLoader = new ComponentLoader();
+const Components = {};
 
-const Components = {
-  DashboardFEAR: componentLoader.add('DashboardFEAR', path.join(process.cwd(), 'adminjs/DashboardFEAR.jsx')),
-};
 
 
 const app = express();
@@ -131,23 +128,6 @@ const adminJs = new AdminJS({
     },
   },
 
-  pages: {
-    dashboard: {
-      label: 'Dashboard FEAR',
-
-      handler: async () => {
-        const totalReclutas = await Reclutas.count();
-        const totalUsuarios = await Usuarios.count();
-
-        return {
-          reclutas: totalReclutas,
-          usuarios: totalUsuarios,
-        };
-      },
-
-    component: Components.DashboardFEAR,
-    },
-  },
 
   locale: {
     language: 'es',
