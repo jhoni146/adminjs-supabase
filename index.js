@@ -43,6 +43,7 @@ const adminJs = new AdminJS({
           name: 'Usuarios',
           icon: 'User',
         },
+        name: 'Usuarios',
         properties: {
           password: { type: 'password' },
         },
@@ -57,6 +58,7 @@ const adminJs = new AdminJS({
           name: 'Reclutas',
           icon: 'Users',
         },
+        name: 'Reclutas',
         properties: {
           fechaInicio: { type: 'string' },
           cursos: {
@@ -160,8 +162,6 @@ const adminJs = new AdminJS({
 
     translations: {
       labels: {
-        Usuario: 'Usuarios',
-        Recluta: 'Reclutas',
       },
 
       properties: {
