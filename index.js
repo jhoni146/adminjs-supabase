@@ -127,68 +127,20 @@ const adminJs = new AdminJS({
     }
   },
 
-  dashboard: {
+dashboard: {
   handler: async () => {
     const totalReclutas = await Recluta.count();
     const totalUsuarios = await Usuario.count();
 
     return {
-      html: `
-        <div style="
-          padding: 30px;
-          font-family: 'Roboto Condensed', sans-serif;
-          background: #1b2a16;
-          color: #e0e0e0;
-          border-radius: 10px;
-        ">
-
-          <div style="text-align:center; margin-bottom:30px;">
-            <img src="https://i.ibb.co/LdBxr4zr/fear512.png" width="140" />
-            <h1 style="margin-top:10px; color:#c2b280;">Clan F.E.A.R - Panel de Mando</h1>
-          </div>
-
-          <div style="
-            display:flex;
-            gap:20px;
-            justify-content:center;
-            margin-bottom:30px;
-          ">
-            <div style="
-              background:#2d3f21;
-              padding:20px;
-              border-radius:10px;
-              width:200px;
-              text-align:center;
-              border:2px solid #3f5a2c;
-            ">
-              <h2 style="margin:0; color:#c2b280;">Reclutas</h2>
-              <p style="font-size:32px; margin:10px 0;">${totalReclutas}</p>
-            </div>
-
-            <div style="
-              background:#2d3f21;
-              padding:20px;
-              border-radius:10px;
-              width:200px;
-              text-align:center;
-              border:2px solid #3f5a2c;
-            ">
-              <h2 style="margin:0; color:#c2b280;">Usuarios</h2>
-              <p style="font-size:32px; margin:10px 0;">${totalUsuarios}</p>
-            </div>
-          </div>
-
-          <div style="text-align:center; margin-top:20px;">
-            <p>Bienvenido al panel administrativo del Clan F.E.A.R.</p>
-            <p>Gestiona reclutas, instructores y operaciones desde un solo lugar.</p>
-          </div>
-
-        </div>
-      `
+      mensaje: "Panel del Clan F.E.A.R",
+      reclutas: totalReclutas,
+      usuarios: totalUsuarios
     };
-  },
-  component: false
+  }
 },
+
+
 
 
 
