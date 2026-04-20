@@ -18,7 +18,7 @@ const componentLoader = new ComponentLoader();
 const Components = {
   DashboardFEAR: componentLoader.add(
     'DashboardFEAR',
-    path.join(__dirname, 'admin/components/DashboardFEAR.jsx')
+    path.join(__dirname, 'components/DashboardFEAR.jsx')
   ),
 };
 
