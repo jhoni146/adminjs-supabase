@@ -34,6 +34,10 @@ const adminJs = new AdminJS({
     {
       resource: Usuarios,
       options: {
+      navigation: {
+      name: 'MENU',
+      icon: 'Menu', // opcional, puedes quitarlo
+    },
         properties: {
           password: { type: 'password' },
         },
@@ -44,6 +48,10 @@ const adminJs = new AdminJS({
     {
       resource: Reclutas,
       options: {
+       navigation: {
+      name: 'MENU',
+      icon: 'Menu', // opcional, puedes quitarlo
+    },
       listProperties: [
         'id',
         'nombre',
@@ -120,7 +128,6 @@ const adminJs = new AdminJS({
         primary20: '#7f9f5b',
         accent: '#c2b280',
         hoverBg: '#2d3f21',
-        filterBg: '#1b2a16',
       },
       fonts: {
         base: '"Roboto Condensed", sans-serif',
