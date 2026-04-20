@@ -6,6 +6,16 @@ import AdminJSSequelize from '@adminjs/sequelize';
 import { sequelize } from './db.js';
 import Recluta from './models/Recluta.js';
 import Usuario from './models/Usuario.js';
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+AdminJS.registerComponent({
+  name: 'DashboardFEAR',
+  component: path.join(__dirname, 'admin/components/DashboardFEAR.jsx'),
+})
+
 
 const app = express();
 
@@ -127,18 +137,27 @@ const adminJs = new AdminJS({
     }
   },
 
-dashboard: {
-  handler: async () => {
-    const totalReclutas = await Recluta.count();
-    const totalUsuarios = await Usuario.count();
+pages: {
+  dashboard: {
+    label: 'Dashboard FEAR',
 
-    return {
-      mensaje: "Panel del Clan F.E.A.R",
-      reclutas: totalReclutas,
-      usuarios: totalUsuarios
-    };
+    handler: async () => {
+      const totalReclutas = await Recluta.count();
+      const totalUsuarios = await Usuario.count();
+
+      return {
+        reclutas: totalReclutas,
+        usuarios: totalUsuarios,
+      };
+    },
+
+    component: {
+      name: 'DashboardFEAR',
+      type: 'page',
+    }
   }
-},
+}
+
 
 
 
