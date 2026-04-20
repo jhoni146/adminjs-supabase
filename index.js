@@ -34,9 +34,6 @@ const adminJs = new AdminJS({
     {
       resource: Usuarios,
       options: {
-        parent: {
-          name: 'Usuarios'
-        },
         properties: {
           password: { type: 'password' },
         },
@@ -47,9 +44,15 @@ const adminJs = new AdminJS({
     {
       resource: Reclutas,
       options: {
-        parent: {
-          name: 'Reclutas'
-        },
+      listProperties: [
+        'id',
+        'nombre',
+        'fechaInicio',
+        'plataforma',
+        'cursos',
+        'createdAt',
+        'updatedAt',
+      ],
         properties: {
           fechaInicio: { type: 'string' },
           cursos: {
