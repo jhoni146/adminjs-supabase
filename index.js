@@ -39,11 +39,10 @@ const adminJs = new AdminJS({
     {
       resource: Usuarios,
       options: {
-        navigation: {
+        parent: {
           name: 'Usuarios',
           icon: 'User',
         },
-        name: 'Usuarios',
         properties: {
           password: { type: 'password' },
         },
@@ -54,11 +53,10 @@ const adminJs = new AdminJS({
     {
       resource: Reclutas,
       options: {
-        navigation: {
+        parent: {
           name: 'Reclutas',
           icon: 'Users',
         },
-        name: 'Reclutas',
         properties: {
           fechaInicio: { type: 'string' },
           cursos: {
