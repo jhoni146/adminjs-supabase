@@ -17,6 +17,10 @@ fechaInicio: {
 cursos: {
   type: DataTypes.JSON,
   allowNull: true,
+},
+nota: {
+  type: DataTypes.STRING,
+  allowNull: true,
 }
 });
 
