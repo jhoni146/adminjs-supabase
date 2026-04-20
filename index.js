@@ -16,11 +16,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const componentLoader = new ComponentLoader();
 
 const Components = {
-  DashboardFEAR: componentLoader.add(
-    'DashboardFEAR',
-    path.join(__dirname, 'components/DashboardFEAR.jsx')
-  ),
+  DashboardFEAR: componentLoader.add('DashboardFEAR', path.join(process.cwd(), 'adminjs/DashboardFEAR.jsx')),
 };
+
 
 const app = express();
 
