@@ -31,6 +31,10 @@ const adminJs = new AdminJS({
     {
   resource: Usuario,
   options: {
+        navigation: {
+        name: 'Usuarios',
+        icon: 'User',
+      },
     properties: {
       password: { type: 'password' }
     }
@@ -39,6 +43,10 @@ const adminJs = new AdminJS({
 {
   resource: Recluta,
   options: {
+        navigation: {
+        name: 'Reclutas',
+        icon: 'Users',
+      },
     properties: {
       // 🟩 La fecha se guarda como STRING
       fechaInicio: {
@@ -156,7 +164,7 @@ pages: {
       type: 'page',
     }
   }
-}
+},
 
 
 
