@@ -100,7 +100,15 @@ const adminJs = new AdminJS({
       edit: {
         before: async (request) => {
           if (request.payload?.fechaInicio) {
-            const [day, month, year] = request.payload.fechaInicio.split('/');
+            const value = request.payload.fechaInicio;
+
+            // 🟩 Si ya está formateada (DD-mmm-YYYY), NO tocar
+            if (value.includes('-')) {
+              return request;
+            }
+
+            // 🟩 Si viene en formato DD/MM/YYYY → formatear
+            const [day, month, year] = value.split('/');
 
             const months = [
               'ene','feb','mar','abr','may','jun',
@@ -111,6 +119,7 @@ const adminJs = new AdminJS({
 
             request.payload.fechaInicio = `${day}-${monthName}-${year}`;
           }
+
           return request;
         },
       },
