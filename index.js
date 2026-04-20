@@ -58,8 +58,8 @@ const adminJs = new AdminJS({
         'fechaInicio',
         'plataforma',
         'cursos',
-        'createdAt',
-        'updatedAt',
+        'nota',
+
       ],
         properties: {
           fechaInicio: { type: 'string' },
