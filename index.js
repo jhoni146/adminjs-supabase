@@ -161,9 +161,6 @@ const adminJs = new AdminJS({
     availableLanguages: ['es', 'en'],
 
     translations: {
-      labels: {
-      },
-
       properties: {
         email: 'Correo electrónico',
         password: 'Contraseña',
