@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 
-const Recluta = sequelize.define('Recluta', {
+const Reclutas = sequelize.define('Reclutas', {
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,4 +20,4 @@ cursos: {
 }
 });
 
-export default Recluta;
+export default Reclutas;

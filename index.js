@@ -4,8 +4,8 @@ import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
 import AdminJSSequelize from '@adminjs/sequelize';
 import { sequelize } from './db.js';
-import Recluta from './models/Recluta.js';
-import Usuario from './models/Usuario.js';
+import Reclutas from './models/Reclutas.js';
+import Usuarios from './models/Usuarios.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ComponentLoader } from 'adminjs';
@@ -37,7 +37,7 @@ const adminJs = new AdminJS({
   resources: [
     // 🟩 PRIMERO USUARIOS
     {
-      resource: Usuario,
+      resource: Usuarios,
       options: {
         navigation: {
           name: 'Usuarios',
@@ -52,7 +52,7 @@ const adminJs = new AdminJS({
 
     // 🟩 LUEGO RECLUTAS
     {
-      resource: Recluta,
+      resource: Reclutas,
       options: {
         navigation: {
           name: 'Reclutas',
