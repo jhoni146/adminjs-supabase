@@ -35,8 +35,7 @@ const adminJs = new AdminJS({
       resource: Usuarios,
       options: {
         parent: {
-          name: 'Usuarios',
-          icon: 'User',
+          name: 'Usuarios'
         },
         properties: {
           password: { type: 'password' },
@@ -49,8 +48,7 @@ const adminJs = new AdminJS({
       resource: Reclutas,
       options: {
         parent: {
-          name: 'Reclutas',
-          icon: 'Users',
+          name: 'Reclutas'
         },
         properties: {
           fechaInicio: { type: 'string' },
