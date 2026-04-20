@@ -147,10 +147,7 @@ const adminJs = new AdminJS({
         };
       },
 
-      component: {
-        name: 'DashboardFEAR',
-        type: 'page',
-      },
+    component: Components.DashboardFEAR,
     },
   },
 
@@ -188,10 +185,6 @@ const adminJs = new AdminJS({
         successfullyUpdated: 'Actualizado correctamente',
         successfullyDeleted: 'Eliminado correctamente',
         noRecordsInResource: 'No hay registros en este recurso',
-      },
-
-      pages: {
-        myCustomPage: 'Página personalizada',
       },
 
       components: {
