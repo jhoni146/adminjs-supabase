@@ -78,37 +78,45 @@ const adminJs = new AdminJS({
           },
         },
 
-        actions: {
-          new: {
-            before: async (request) => {
-              if (request.payload?.fechaInicio) {
-                const date = new Date(request.payload.fechaInicio);
-                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = months[date.getMonth()];
-                const year = date.getFullYear();
-                request.payload.fechaInicio = `${day}-${month}-${year}`;
-              }
-              return request;
-            },
-          },
+         actions: {
+      new: {
+        before: async (request) => {
+          if (request.payload?.fechaInicio) {
+            const [day, month, year] = request.payload.fechaInicio.split('/');
 
-          edit: {
-            before: async (request) => {
-              if (request.payload?.fechaInicio) {
-                const date = new Date(request.payload.fechaInicio);
-                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = months[date.getMonth()];
-                const year = date.getFullYear();
-                request.payload.fechaInicio = `${day}-${month}-${year}`;
-              }
-              return request;
-            },
-          },
+            const months = [
+              'ene','feb','mar','abr','may','jun',
+              'jul','ago','sep','oct','nov','dic'
+            ];
+
+            const monthName = months[parseInt(month) - 1];
+
+            request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+          }
+          return request;
+        },
+      },
+
+      edit: {
+        before: async (request) => {
+          if (request.payload?.fechaInicio) {
+            const [day, month, year] = request.payload.fechaInicio.split('/');
+
+            const months = [
+              'ene','feb','mar','abr','may','jun',
+              'jul','ago','sep','oct','nov','dic'
+            ];
+
+            const monthName = months[parseInt(month) - 1];
+
+            request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+          }
+          return request;
         },
       },
     },
+  },
+},
   ],
 
   rootPath: '/admin',
