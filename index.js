@@ -146,68 +146,61 @@ dashboard: {
 
 locale: {
   language: 'es',
+  availableLanguages: ['es', 'en'],
+
   translations: {
     labels: {
-      navigation: 'Navegación',
-      filters: 'Filtros',
-      actions: 'Acciones',
-      pages: 'Páginas',
-      Recluta: 'Reclutas',
       Usuario: 'Usuarios',
+      Recluta: 'Reclutas',
     },
 
-    resources: {
-      Recluta: {
-        properties: {
-          nombre: 'Nombre',
-          plataforma: 'Plataforma',
-          fechaInicio: 'Fecha de inicio',
-          cursos: 'Cursos',
-        },
-        actions: {
-          new: 'Crear recluta',
-          edit: 'Editar recluta',
-          show: 'Ver recluta',
-          delete: 'Eliminar recluta',
-          list: 'Lista de reclutas',
-        }
-      },
-
-      Usuario: {
-        properties: {
-          email: 'Correo electrónico',
-          password: 'Contraseña',
-        },
-        actions: {
-          new: 'Crear usuario',
-          edit: 'Editar usuario',
-          show: 'Ver usuario',
-          delete: 'Eliminar usuario',
-          list: 'Lista de usuarios',
-        }
-      }
+    properties: {
+      email: 'Correo electrónico',
+      password: 'Contraseña',
+      fechaInicio: 'Fecha de inicio',
     },
 
-    messages: {
-      loginWelcome: 'Panel del Clan Milsim',
-      successfullyUpdated: 'Actualizado correctamente',
-      successfullyCreated: 'Creado correctamente',
-      successfullyDeleted: 'Eliminado correctamente',
-      noRecordsInResource: 'No hay registros en este recurso',
+    actions: {
+      new: 'Crear',
+      edit: 'Editar',
+      delete: 'Eliminar',
+      show: 'Ver',
+      list: 'Listado',
     },
 
     buttons: {
       save: 'Guardar',
-      addNewItem: 'Añadir nuevo',
+      addNewItem: 'Añadir',
       filter: 'Filtrar',
       applyChanges: 'Aplicar cambios',
       resetFilter: 'Reiniciar filtros',
-      confirmRemovalMany: 'Confirmar eliminación',
       logout: 'Cerrar sesión',
       login: 'Iniciar sesión',
+    },
+
+    messages: {
+      successfullyCreated: 'Creado correctamente',
+      successfullyUpdated: 'Actualizado correctamente',
+      successfullyDeleted: 'Eliminado correctamente',
+      noRecordsInResource: 'No hay registros en este recurso',
+    },
+
+    pages: {
+      myCustomPage: 'Página personalizada'
+    },
+
+    components: {
+      DropZone: {
+        placeholder: 'Arrastra tu archivo aquí o haz clic',
+        acceptedSize: 'Tamaño máximo: {{maxSize}}',
+        acceptedType: 'Tipos permitidos: {{mimeTypes}}',
+        unsupportedSize: 'El archivo {{fileName}} es demasiado grande',
+        unsupportedType: 'El archivo {{fileName}} tiene un tipo no permitido',
+      }
     }
   }
 }
+
 
 });
 
