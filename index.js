@@ -8,13 +8,19 @@ import Recluta from './models/Recluta.js';
 import Usuario from './models/Usuario.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { ComponentLoader } from 'adminjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-AdminJS.registerComponent({
-  name: 'DashboardFEAR',
-  component: path.join(__dirname, 'admin/components/DashboardFEAR.jsx'),
-});
+// 🟩 NUEVO SISTEMA DE COMPONENTES EN ADMINJS v7
+const componentLoader = new ComponentLoader();
+
+const Components = {
+  DashboardFEAR: componentLoader.add(
+    'DashboardFEAR',
+    path.join(__dirname, 'admin/components/DashboardFEAR.jsx')
+  ),
+};
 
 const app = express();
 
@@ -26,6 +32,8 @@ AdminJS.registerAdapter({
 
 // Configuración AdminJS
 const adminJs = new AdminJS({
+  componentLoader,
+
   resources: [
     // 🟩 PRIMERO USUARIOS
     {
@@ -50,9 +58,7 @@ const adminJs = new AdminJS({
           icon: 'Users',
         },
         properties: {
-          fechaInicio: {
-            type: 'string',
-          },
+          fechaInicio: { type: 'string' },
           cursos: {
             type: 'string',
             isArray: true,
@@ -67,60 +73,30 @@ const adminJs = new AdminJS({
             ],
           },
         },
+
         actions: {
           new: {
             before: async (request) => {
-              if (request.payload && request.payload.fechaInicio) {
-                const raw = request.payload.fechaInicio;
-                const date = new Date(raw);
-
-                const months = [
-                  'ene',
-                  'feb',
-                  'mar',
-                  'abr',
-                  'may',
-                  'jun',
-                  'jul',
-                  'ago',
-                  'sep',
-                  'oct',
-                  'nov',
-                  'dic',
-                ];
+              if (request.payload?.fechaInicio) {
+                const date = new Date(request.payload.fechaInicio);
+                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = months[date.getMonth()];
                 const year = date.getFullYear();
-
                 request.payload.fechaInicio = `${day}-${month}-${year}`;
               }
               return request;
             },
           },
+
           edit: {
             before: async (request) => {
-              if (request.payload && request.payload.fechaInicio) {
-                const raw = request.payload.fechaInicio;
-                const date = new Date(raw);
-
-                const months = [
-                  'ene',
-                  'feb',
-                  'mar',
-                  'abr',
-                  'may',
-                  'jun',
-                  'jul',
-                  'ago',
-                  'sep',
-                  'oct',
-                  'nov',
-                  'dic',
-                ];
+              if (request.payload?.fechaInicio) {
+                const date = new Date(request.payload.fechaInicio);
+                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = months[date.getMonth()];
                 const year = date.getFullYear();
-
                 request.payload.fechaInicio = `${day}-${month}-${year}`;
               }
               return request;
@@ -138,6 +114,7 @@ const adminJs = new AdminJS({
     softwareBrothers: false,
     logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
     favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
+
     theme: {
       colors: {
         primary100: '#1b2a16',
@@ -159,6 +136,7 @@ const adminJs = new AdminJS({
   pages: {
     dashboard: {
       label: 'Dashboard FEAR',
+
       handler: async () => {
         const totalReclutas = await Recluta.count();
         const totalUsuarios = await Usuario.count();
@@ -168,6 +146,7 @@ const adminJs = new AdminJS({
           usuarios: totalUsuarios,
         };
       },
+
       component: {
         name: 'DashboardFEAR',
         type: 'page',
@@ -178,16 +157,19 @@ const adminJs = new AdminJS({
   locale: {
     language: 'es',
     availableLanguages: ['es', 'en'],
+
     translations: {
       labels: {
         Usuario: 'Usuarios',
         Recluta: 'Reclutas',
       },
+
       properties: {
         email: 'Correo electrónico',
         password: 'Contraseña',
         fechaInicio: 'Fecha de inicio',
       },
+
       actions: {
         new: 'Crear',
         edit: 'Editar',
@@ -195,6 +177,7 @@ const adminJs = new AdminJS({
         show: 'Ver',
         list: 'Listado',
       },
+
       buttons: {
         save: 'Guardar',
         addNewItem: 'Añadir',
@@ -204,15 +187,18 @@ const adminJs = new AdminJS({
         logout: 'Cerrar sesión',
         login: 'Iniciar sesión',
       },
+
       messages: {
         successfullyCreated: 'Creado correctamente',
         successfullyUpdated: 'Actualizado correctamente',
         successfullyDeleted: 'Eliminado correctamente',
         noRecordsInResource: 'No hay registros en este recurso',
       },
+
       pages: {
         myCustomPage: 'Página personalizada',
       },
+
       components: {
         DropZone: {
           placeholder: 'Arrastra tu archivo aquí o haz clic',
@@ -227,18 +213,13 @@ const adminJs = new AdminJS({
 });
 
 // Autenticación
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
-
 const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
   {
     authenticate: async (email, password) => {
       const user = await Usuario.findOne({ where: { email } });
       if (!user) return null;
-      if (user.password === password) {
-        return { email: user.email };
-      }
+      if (user.password === password) return { email: user.email };
       return null;
     },
     cookiePassword: process.env.ADMINJS_COOKIE_SECRET || 'cookie-secret',
@@ -264,4 +245,3 @@ try {
 } catch (err) {
   console.error('Error al iniciar:', err);
 }
-
