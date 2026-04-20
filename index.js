@@ -140,8 +140,8 @@ const adminJs = new AdminJS({
       label: 'Dashboard FEAR',
 
       handler: async () => {
-        const totalReclutas = await Recluta.count();
-        const totalUsuarios = await Usuario.count();
+        const totalReclutas = await Reclutas.count();
+        const totalUsuarios = await Usuarios.count();
 
         return {
           reclutas: totalReclutas,
@@ -214,7 +214,7 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
   {
     authenticate: async (email, password) => {
-      const user = await Usuario.findOne({ where: { email } });
+      const user = await Usuarios.findOne({ where: { email } });
       if (!user) return null;
       if (user.password === password) return { email: user.email };
       return null;
