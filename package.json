@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node ./index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,7 @@
     "@adminjs/design-system": "^4.1.1",
     "@adminjs/express": "^6.1.1",
     "@adminjs/sequelize": "^4.1.1",
-    "adminjs": "7.8.17",
+    "adminjs": "^7.8.17",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "pg": "^8.20.0",
