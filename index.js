@@ -59,6 +59,7 @@ const adminJs = new AdminJS({
         'plataforma',
         'cursos',
         'nota',
+        'evaluacion',
 
       ],
         properties: {
@@ -76,6 +77,20 @@ const adminJs = new AdminJS({
               { value: 'Orientacion', label: 'Orientación' },
             ],
           },
+          evaluacion: {
+          type: 'string',
+          availableValues: [
+            { value: 'Apto', label: 'Apto' },
+            { value: 'No apto', label: 'No apto' },
+          ],
+          isVisible: {
+            list: true,
+            edit: true,
+            show: true,
+            filter: true,
+          },
+        },
+
         },
 
          actions: {
