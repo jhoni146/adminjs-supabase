@@ -21,7 +21,12 @@ cursos: {
 nota: {
   type: DataTypes.STRING,
   allowNull: true,
+},
+evaluacion: {
+  type: DataTypes.STRING,
+  allowNull: true,
 }
+
 });
 
 export default Reclutas;
