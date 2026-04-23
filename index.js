@@ -12,7 +12,7 @@ import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidad from './models/Mensualidad.js';
 
-// 🟦 2. Definir relaciones
+
 Miembros.hasMany(Mensualidad, { foreignKey: 'miembroId' });
 Mensualidad.belongsTo(Miembros, { foreignKey: 'miembroId' });
 
