@@ -87,24 +87,44 @@ const adminJs = new AdminJS({
     },
 
     listProperties: [
-      'miembroId',
-      'cuota',
-      'mes',
-      'pagado',
-      'nota',
-      'id',
+  'miembroId',
+  'mes',
+  'cuota',
+  'pagado',
+  'nota',
+  'id',
     ],
 
     properties: {
-      miembroId: {
-        reference: 'Miembros',
-        isVisible: {
-          list: true,
-          edit: true,
-          show: true,
-          filter: true,
-        },
-      },
+miembroId: {
+  reference: 'Miembros',
+  isVisible: {
+    list: true,
+    edit: true,
+    show: true,
+    filter: true,
+  },
+  populate: true,
+},
+mes: {
+  type: 'string',
+  availableValues: [
+    { value: 'enero', label: 'Enero' },
+    { value: 'febrero', label: 'Febrero' },
+    { value: 'marzo', label: 'Marzo' },
+    { value: 'abril', label: 'Abril' },
+    { value: 'mayo', label: 'Mayo' },
+    { value: 'junio', label: 'Junio' },
+    { value: 'julio', label: 'Julio' },
+    { value: 'agosto', label: 'Agosto' },
+    { value: 'septiembre', label: 'Septiembre' },
+    { value: 'octubre', label: 'Octubre' },
+    { value: 'noviembre', label: 'Noviembre' },
+    { value: 'diciembre', label: 'Diciembre' },
+  ],
+},
+
+
 
       pagado: {
         type: 'boolean',
