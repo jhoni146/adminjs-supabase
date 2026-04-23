@@ -9,6 +9,12 @@ import Usuarios from './models/Usuarios.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ComponentLoader } from 'adminjs';
+import Miembros from './models/Miembros.js';
+import Mensualidad from './models/Mensualidad.js';
+
+// 🟦 2. Definir relaciones
+Miembros.hasMany(Mensualidad, { foreignKey: 'miembroId' });
+Mensualidad.belongsTo(Miembros, { foreignKey: 'miembroId' });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,6 +49,75 @@ const adminJs = new AdminJS({
         },
       },
     },
+{
+  resource: Miembros,
+  options: {
+    navigation: {
+      name: 'MENU',
+      icon: 'User',
+    },
+
+    listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
+
+    properties: {
+      plataforma: {
+        type: 'string',
+        availableValues: [
+          { value: 'PLAYSTATION', label: 'PLAYSTATION' },
+          { value: 'XBOX', label: 'XBOX' },
+          { value: 'PC', label: 'PC' },
+        ],
+        isVisible: {
+          list: true,
+          edit: true,
+          show: true,
+          filter: true,
+        },
+      },
+    },
+  },
+},
+
+  {
+  resource: Mensualidad,
+  options: {
+    navigation: {
+      name: 'MENU',
+      icon: 'Money',
+    },
+
+    listProperties: [
+      'miembroId',
+      'cuota',
+      'mes',
+      'pagado',
+      'nota',
+      'id',
+    ],
+
+    properties: {
+      miembroId: {
+        reference: 'Miembros',
+        isVisible: {
+          list: true,
+          edit: true,
+          show: true,
+          filter: true,
+        },
+      },
+
+      pagado: {
+        type: 'boolean',
+        availableValues: [
+          { value: true, label: 'Pagado' },
+          { value: false, label: 'No pagado' },
+        ],
+      },
+    },
+  },
+},
+
+
 
     // 🟩 LUEGO RECLUTAS
     {
@@ -243,7 +318,7 @@ const port = process.env.PORT || 3000;
 try {
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
-  await sequelize.sync();
+  await sequelize.sync({ alter: true });
   app.listen(port, () => {
     console.log(`Servidor escuchando en puerto ${port}`);
     console.log(`AdminJS en http://localhost:${port}${adminJs.options.rootPath}`);
