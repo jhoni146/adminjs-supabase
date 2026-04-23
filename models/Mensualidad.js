@@ -18,6 +18,8 @@ const Mensualidad = sequelize.define('Mensualidad', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+}, {
+  tableName: 'Mensualidades',   // 👈 NOMBRE REAL DE LA TABLA
 });
 
 export default Mensualidad;
