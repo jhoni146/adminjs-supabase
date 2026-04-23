@@ -60,6 +60,9 @@ const adminJs = new AdminJS({
     listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
 
     properties: {
+      nombre: {
+        isTitle: true,   // 👈 ESTO HACE QUE APAREZCA EL NOMBRE EN EL SELECT
+      },
       plataforma: {
         type: 'string',
         availableValues: [
@@ -67,16 +70,11 @@ const adminJs = new AdminJS({
           { value: 'XBOX', label: 'XBOX' },
           { value: 'PC', label: 'PC' },
         ],
-        isVisible: {
-          list: true,
-          edit: true,
-          show: true,
-          filter: true,
-        },
       },
     },
   },
 },
+
 
   {
   resource: Mensualidad,
