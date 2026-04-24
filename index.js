@@ -207,6 +207,9 @@ const adminJs = new AdminJS({
           'evaluacion',
         ],
         properties: {
+          nombre: {
+            isTitle: true,
+          },
           fechaInicio: { type: 'string' },
           cursos: {
             type: 'string',
