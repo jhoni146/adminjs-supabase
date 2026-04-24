@@ -12,7 +12,6 @@ import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidad from './models/Mensualidad.js';
 
-
 Miembros.hasMany(Mensualidad, { foreignKey: 'miembroId' });
 Mensualidad.belongsTo(Miembros, { foreignKey: 'miembroId' });
 
@@ -20,8 +19,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
 const Components = {};
-
-
 
 const app = express();
 
@@ -40,122 +37,213 @@ const adminJs = new AdminJS({
     {
       resource: Usuarios,
       options: {
-      navigation: {
-      name: 'MENU',
-      icon: 'Menu', // opcional, puedes quitarlo
-    },
+        navigation: {
+          name: 'MENU',
+          icon: 'Menu',
+        },
         properties: {
           password: { type: 'password' },
         },
       },
     },
-{
-  resource: Miembros,
-  options: {
-    navigation: {
-      name: 'MENU',
-      icon: 'User',
-    },
 
-    listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
-
-    properties: {
-      nombre: {
-        isTitle: true,   // 👈 ESTO HACE QUE APAREZCA EL NOMBRE EN EL SELECT
-      },
-      plataforma: {
-        type: 'string',
-        availableValues: [
-          { value: 'PLAYSTATION', label: 'PLAYSTATION' },
-          { value: 'XBOX', label: 'XBOX' },
-          { value: 'PC', label: 'PC' },
-        ],
-      },
-    },
-  },
-},
-
-
-{
-  resource: Mensualidad,
-  options: {
-    navigation: {
-      name: 'MENU',
-      icon: 'Money',
-    },
-
-    listProperties: [
-      'miembroId',
-      'mes',
-      'cuota',
-      'pagado',
-      'nota',
-      'id',
-    ],
-
-    properties: {
-      miembroId: {
-        reference: 'Miembros',
-        isVisible: {
-          list: true,
-          edit: true,
-          show: true,
-          filter: true,
+    // 🟩 MIEMBROS
+    {
+      resource: Miembros,
+      options: {
+        navigation: {
+          name: 'MENU',
+          icon: 'User',
         },
-        populate: true,
-      },
 
-      mes: {
-        type: 'string',
-        availableValues: [
-          { value: 'enero', label: 'Enero' },
-          { value: 'febrero', label: 'Febrero' },
-          { value: 'marzo', label: 'Marzo' },
-          { value: 'abril', label: 'Abril' },
-          { value: 'mayo', label: 'Mayo' },
-          { value: 'junio', label: 'Junio' },
-          { value: 'julio', label: 'Julio' },
-          { value: 'agosto', label: 'Agosto' },
-          { value: 'septiembre', label: 'Septiembre' },
-          { value: 'octubre', label: 'Octubre' },
-          { value: 'noviembre', label: 'Noviembre' },
-          { value: 'diciembre', label: 'Diciembre' },
-        ],
-      },
+        listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
 
-      pagado: {
-        type: 'boolean',
-        availableValues: [
-          { value: true, label: 'Pagado' },
-          { value: false, label: 'No pagado' },
-        ],
+        properties: {
+          nombre: {
+            isTitle: true,
+          },
+          plataforma: {
+            type: 'string',
+            availableValues: [
+              { value: 'PLAYSTATION', label: 'PLAYSTATION' },
+              { value: 'XBOX', label: 'XBOX' },
+              { value: 'PC', label: 'PC' },
+            ],
+          },
+        },
       },
     },
 
-    actions: {
-      generarMes: {
-        actionType: 'resource',
-        icon: 'Add',
-        label: 'Generar mensualidades del mes',
-        component: false,
-        showInDrawer: true,   // 👈 OBLIGATORIO EN ADMINJS v7
+    // 🟩 MENSUALIDAD (SIN ACCIÓN, LIMPIO)
+    {
+      resource: Mensualidad,
+      options: {
+        navigation: {
+          name: 'MENU',
+          icon: 'Money',
+        },
 
-        // AdminJS v7 NO muestra formularios automáticos → usamos filtros
-        before: async (request) => {
-          const mes = request?.query?.filters?.mes;
-          const cuota = request?.query?.filters?.cuota;
+        listProperties: [
+          'miembroId',
+          'mes',
+          'cuota',
+          'pagado',
+          'nota',
+          'id',
+        ],
+
+        properties: {
+          miembroId: {
+            reference: 'Miembros',
+            isVisible: {
+              list: true,
+              edit: true,
+              show: true,
+              filter: true,
+            },
+            populate: true,
+          },
+
+          mes: {
+            type: 'string',
+            availableValues: [
+              { value: 'enero', label: 'Enero' },
+              { value: 'febrero', label: 'Febrero' },
+              { value: 'marzo', label: 'Marzo' },
+              { value: 'abril', label: 'Abril' },
+              { value: 'mayo', label: 'Mayo' },
+              { value: 'junio', label: 'Junio' },
+              { value: 'julio', label: 'Julio' },
+              { value: 'agosto', label: 'Agosto' },
+              { value: 'septiembre', label: 'Septiembre' },
+              { value: 'octubre', label: 'Octubre' },
+              { value: 'noviembre', label: 'Noviembre' },
+              { value: 'diciembre', label: 'Diciembre' },
+            ],
+          },
+
+          pagado: {
+            type: 'boolean',
+            availableValues: [
+              { value: true, label: 'Pagado' },
+              { value: false, label: 'No pagado' },
+            ],
+          },
+        },
+      },
+    },
+
+    // 🟩 RECLUTAS
+    {
+      resource: Reclutas,
+      options: {
+        navigation: {
+          name: 'MENU',
+          icon: 'Menu',
+        },
+        listProperties: [
+          'id',
+          'nombre',
+          'fechaInicio',
+          'plataforma',
+          'cursos',
+          'nota',
+          'evaluacion',
+        ],
+        properties: {
+          fechaInicio: { type: 'string' },
+          cursos: {
+            type: 'string',
+            isArray: true,
+            availableValues: [
+              { value: 'Cibi', label: 'Cibi' },
+              { value: 'Medico', label: 'Médico' },
+              { value: 'Formaciones', label: 'Formaciones' },
+              { value: 'Mout', label: 'MOUT' },
+              { value: 'Cqb', label: 'CQB' },
+              { value: 'Comunicaciones', label: 'Comunicaciones' },
+              { value: 'Orientacion', label: 'Orientación' },
+            ],
+          },
+          evaluacion: {
+            type: 'string',
+            availableValues: [
+              { value: 'Apto', label: 'Apto' },
+              { value: 'No apto', label: 'No apto' },
+            ],
+            isVisible: {
+              list: true,
+              edit: true,
+              show: true,
+              filter: true,
+            },
+          },
+        },
+
+        actions: {
+          new: {
+            before: async (request) => {
+              if (request.payload?.fechaInicio) {
+                const [day, month, year] = request.payload.fechaInicio.split('/');
+
+                const months = [
+                  'ene','feb','mar','abr','may','jun',
+                  'jul','ago','sep','oct','nov','dic'
+                ];
+
+                const monthName = months[parseInt(month) - 1];
+
+                request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+              }
+              return request;
+            },
+          },
+
+          edit: {
+            before: async (request) => {
+              if (request.payload?.fechaInicio) {
+                const value = request.payload.fechaInicio;
+
+                if (value.includes('-')) {
+                  return request;
+                }
+
+                const [day, month, year] = value.split('/');
+
+                const months = [
+                  'ene','feb','mar','abr','may','jun',
+                  'jul','ago','sep','oct','nov','dic'
+                ];
+
+                const monthName = months[parseInt(month) - 1];
+
+                request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+              }
+
+              return request;
+            },
+          },
+        },
+      },
+    },
+  ],
+
+  // 🟩 PÁGINA PERSONALIZADA (FUNCIONA 100% EN ADMINJS v7)
+  pages: {
+    generarMensualidades: {
+      label: 'Generar Mensualidades',
+      handler: async (request, response, context) => {
+        if (request.method === 'post') {
+          const { mes, cuota } = request.payload;
 
           if (!mes || !cuota) {
-            throw new Error('Debes indicar mes y cuota usando el filtro de la derecha');
+            return {
+              notice: {
+                message: 'Debes indicar mes y cuota',
+                type: 'error',
+              },
+            };
           }
-
-          request.payload = { mes, cuota };
-          return request;
-        },
-
-        handler: async (request, response, context) => {
-          const { mes, cuota } = request.payload;
-          const { h } = context;
 
           const miembros = await Miembros.findAll();
 
@@ -174,119 +262,49 @@ const adminJs = new AdminJS({
               message: `Mensualidades generadas para ${miembros.length} miembros`,
               type: 'success',
             },
-            redirectUrl: h.resourceUrl(),
           };
-        },
+        }
+
+        return {
+          html: `
+            <h1 style="font-family: sans-serif;">Generar mensualidades</h1>
+
+            <form method="POST" style="font-family: sans-serif; max-width: 400px;">
+              <label>Mes:</label>
+              <select name="mes" style="width: 100%; padding: 8px; margin-bottom: 12px;">
+                <option value="enero">Enero</option>
+                <option value="febrero">Febrero</option>
+                <option value="marzo">Marzo</option>
+                <option value="abril">Abril</option>
+                <option value="mayo">Mayo</option>
+                <option value="junio">Junio</option>
+                <option value="julio">Julio</option>
+                <option value="agosto">Agosto</option>
+                <option value="septiembre">Septiembre</option>
+                <option value="octubre">Octubre</option>
+                <option value="noviembre">Noviembre</option>
+                <option value="diciembre">Diciembre</option>
+              </select>
+
+              <label>Cuota:</label>
+              <input type="number" name="cuota" style="width: 100%; padding: 8px; margin-bottom: 12px;" />
+
+              <button type="submit" style="
+                padding: 10px 15px;
+                background: #2d3f21;
+                color: white;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+              ">
+                Generar mensualidades
+              </button>
+            </form>
+          `,
+        };
       },
     },
   },
-},
-
-
-
-
-
-
-
-
-    // 🟩 LUEGO RECLUTAS
-    {
-      resource: Reclutas,
-      options: {
-       navigation: {
-      name: 'MENU',
-      icon: 'Menu', // opcional, puedes quitarlo
-    },
-      listProperties: [
-        'id',
-        'nombre',
-        'fechaInicio',
-        'plataforma',
-        'cursos',
-        'nota',
-        'evaluacion',
-
-      ],
-        properties: {
-          fechaInicio: { type: 'string' },
-          cursos: {
-            type: 'string',
-            isArray: true,
-            availableValues: [
-              { value: 'Cibi', label: 'Cibi' },
-              { value: 'Medico', label: 'Médico' },
-              { value: 'Formaciones', label: 'Formaciones' },
-              { value: 'Mout', label: 'MOUT' },
-              { value: 'Cqb', label: 'CQB' },
-              { value: 'Comunicaciones', label: 'Comunicaciones' },
-              { value: 'Orientacion', label: 'Orientación' },
-            ],
-          },
-          evaluacion: {
-          type: 'string',
-          availableValues: [
-            { value: 'Apto', label: 'Apto' },
-            { value: 'No apto', label: 'No apto' },
-          ],
-          isVisible: {
-            list: true,
-            edit: true,
-            show: true,
-            filter: true,
-          },
-        },
-
-        },
-
-         actions: {
-      new: {
-        before: async (request) => {
-          if (request.payload?.fechaInicio) {
-            const [day, month, year] = request.payload.fechaInicio.split('/');
-
-            const months = [
-              'ene','feb','mar','abr','may','jun',
-              'jul','ago','sep','oct','nov','dic'
-            ];
-
-            const monthName = months[parseInt(month) - 1];
-
-            request.payload.fechaInicio = `${day}-${monthName}-${year}`;
-          }
-          return request;
-        },
-      },
-
-      edit: {
-        before: async (request) => {
-          if (request.payload?.fechaInicio) {
-            const value = request.payload.fechaInicio;
-
-            // 🟩 Si ya está formateada (DD-mmm-YYYY), NO tocar
-            if (value.includes('-')) {
-              return request;
-            }
-
-            // 🟩 Si viene en formato DD/MM/YYYY → formatear
-            const [day, month, year] = value.split('/');
-
-            const months = [
-              'ene','feb','mar','abr','may','jun',
-              'jul','ago','sep','oct','nov','dic'
-            ];
-
-            const monthName = months[parseInt(month) - 1];
-
-            request.payload.fechaInicio = `${day}-${monthName}-${year}`;
-          }
-
-          return request;
-        },
-      },
-    },
-  },
-},
-  ],
 
   rootPath: '/admin',
 
@@ -312,7 +330,6 @@ const adminJs = new AdminJS({
       },
     },
   },
-
 
   locale: {
     language: 'es',
