@@ -22,10 +22,6 @@ const Mensualidad = sequelize.define('Mensualidad', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-<<<<<<< HEAD
-=======
-
->>>>>>> 4b8717e9 (asddddddrr)
   reclutaId: {
     type: DataTypes.INTEGER,
     allowNull: true,
