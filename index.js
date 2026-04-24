@@ -14,6 +14,9 @@ import Mensualidad from './models/Mensualidad.js';
 
 Miembros.hasMany(Mensualidad, { foreignKey: 'miembroId' });
 Mensualidad.belongsTo(Miembros, { foreignKey: 'miembroId' });
+Reclutas.hasMany(Mensualidad, { foreignKey: 'reclutaId' });
+Mensualidad.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,20 +49,39 @@ async function generarMensualidadesAutomaticas() {
     return;
   }
 
+  // 🟩 GENERAR PARA MIEMBROS
   const miembros = await Miembros.findAll();
 
   for (const m of miembros) {
     await Mensualidad.create({
       miembroId: m.id,
+      reclutaId: null,
       mes: mesActual,
-      cuota: 10, // 👈 cuota por defecto
+      cuota: 3.50,
       pagado: false,
       nota: '',
     });
   }
 
-  console.log(`Mensualidades de ${mesActual} generadas automáticamente para ${miembros.length} miembros.`);
+  // 🟩 GENERAR PARA RECLUTAS
+  const reclutas = await Reclutas.findAll();
+
+  for (const r of reclutas) {
+    await Mensualidad.create({
+      miembroId: null,
+      reclutaId: r.id,
+      mes: mesActual,
+      cuota: 3.50,
+      pagado: false,
+      nota: '',
+    });
+  }
+
+  console.log(
+    `Mensualidades de ${mesActual} generadas automáticamente para ${miembros.length} miembros y ${reclutas.length} reclutas.`
+  );
 }
+
 
 // Configuración AdminJS
 const adminJs = new AdminJS({
@@ -128,12 +150,13 @@ const adminJs = new AdminJS({
         properties: {
           miembroId: {
             reference: 'Miembros',
-            isVisible: {
-              list: true,
-              edit: true,
-              show: true,
-              filter: true,
-            },
+            isVisible: { list: true, edit: true, show: true, filter: true },
+            populate: true,
+          },
+
+          reclutaId: {
+            reference: 'Reclutas',
+            isVisible: { list: true, edit: true, show: true, filter: true },
             populate: true,
           },
 

@@ -18,6 +18,14 @@ const Mensualidad = sequelize.define('Mensualidad', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  miembroId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  reclutaId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 }, {
   tableName: 'Mensualidades',   // 👈 NOMBRE REAL DE LA TABLA
 });
