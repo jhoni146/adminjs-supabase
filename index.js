@@ -140,6 +140,7 @@ const adminJs = new AdminJS({
 
         listProperties: [
           'miembroId',
+          'reclutaId',
           'mes',
           'cuota',
           'pagado',
