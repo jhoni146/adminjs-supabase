@@ -132,79 +132,56 @@ const adminJs = new AdminJS({
       },
     },
 
-    // 🟩 ACCIÓN QUE SIEMPRE APARECE (resource)
     actions: {
       generarMes: {
         actionType: 'resource',
         icon: 'Add',
         label: 'Generar mensualidades del mes',
         component: false,
+        showInDrawer: true,   // 👈 OBLIGATORIO EN ADMINJS v7
 
-        form: {
-          mes: {
-            type: 'string',
-            availableValues: [
-              { value: 'enero', label: 'Enero' },
-              { value: 'febrero', label: 'Febrero' },
-              { value: 'marzo', label: 'Marzo' },
-              { value: 'abril', label: 'Abril' },
-              { value: 'mayo', label: 'Mayo' },
-              { value: 'junio', label: 'Junio' },
-              { value: 'julio', label: 'Julio' },
-              { value: 'agosto', label: 'Agosto' },
-              { value: 'septiembre', label: 'Septiembre' },
-              { value: 'octubre', label: 'Octubre' },
-              { value: 'noviembre', label: 'Noviembre' },
-              { value: 'diciembre', label: 'Diciembre' },
-            ],
-          },
-          cuota: {
-            type: 'number',
-          },
+        // AdminJS v7 NO muestra formularios automáticos → usamos filtros
+        before: async (request) => {
+          const mes = request?.query?.filters?.mes;
+          const cuota = request?.query?.filters?.cuota;
+
+          if (!mes || !cuota) {
+            throw new Error('Debes indicar mes y cuota usando el filtro de la derecha');
+          }
+
+          request.payload = { mes, cuota };
+          return request;
         },
 
         handler: async (request, response, context) => {
+          const { mes, cuota } = request.payload;
           const { h } = context;
 
-          if (request.method === 'post') {
-            const { mes, cuota } = request.payload;
+          const miembros = await Miembros.findAll();
 
-            if (!mes || !cuota) {
-              return {
-                notice: {
-                  message: 'Debes indicar mes y cuota',
-                  type: 'error',
-                },
-              };
-            }
-
-            const miembros = await Miembros.findAll();
-
-            for (const m of miembros) {
-              await Mensualidad.create({
-                miembroId: m.id,
-                mes,
-                cuota,
-                pagado: false,
-                nota: '',
-              });
-            }
-
-            return {
-              notice: {
-                message: `Mensualidades generadas para ${miembros.length} miembros`,
-                type: 'success',
-              },
-              redirectUrl: h.resourceUrl(),
-            };
+          for (const m of miembros) {
+            await Mensualidad.create({
+              miembroId: m.id,
+              mes,
+              cuota,
+              pagado: false,
+              nota: '',
+            });
           }
 
-          return {};
+          return {
+            notice: {
+              message: `Mensualidades generadas para ${miembros.length} miembros`,
+              type: 'success',
+            },
+            redirectUrl: h.resourceUrl(),
+          };
         },
       },
     },
   },
 },
+
 
 
 
