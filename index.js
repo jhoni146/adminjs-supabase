@@ -28,12 +28,45 @@ AdminJS.registerAdapter({
   Database: AdminJSSequelize.Database,
 });
 
+// 🟩 FUNCIÓN AUTOMÁTICA PARA GENERAR MENSUALIDADES
+async function generarMensualidadesAutomaticas() {
+  const fecha = new Date();
+  const meses = [
+    'enero','febrero','marzo','abril','mayo','junio',
+    'julio','agosto','septiembre','octubre','noviembre','diciembre'
+  ];
+
+  const mesActual = meses[fecha.getMonth()];
+
+  // ¿Ya existen mensualidades de este mes?
+  const existentes = await Mensualidad.findOne({ where: { mes: mesActual } });
+
+  if (existentes) {
+    console.log(`Mensualidades de ${mesActual} ya existen. No se generan.`);
+    return;
+  }
+
+  const miembros = await Miembros.findAll();
+
+  for (const m of miembros) {
+    await Mensualidad.create({
+      miembroId: m.id,
+      mes: mesActual,
+      cuota: 10, // 👈 cuota por defecto
+      pagado: false,
+      nota: '',
+    });
+  }
+
+  console.log(`Mensualidades de ${mesActual} generadas automáticamente para ${miembros.length} miembros.`);
+}
+
 // Configuración AdminJS
 const adminJs = new AdminJS({
   componentLoader,
 
   resources: [
-    // 🟩 PRIMERO USUARIOS
+    // 🟩 USUARIOS
     {
       resource: Usuarios,
       options: {
@@ -74,7 +107,7 @@ const adminJs = new AdminJS({
       },
     },
 
-    // 🟩 MENSUALIDAD (SIN ACCIÓN, LIMPIO)
+    // 🟩 MENSUALIDADES (SIN ACCIONES)
     {
       resource: Mensualidad,
       options: {
@@ -228,84 +261,6 @@ const adminJs = new AdminJS({
     },
   ],
 
-  // 🟩 PÁGINA PERSONALIZADA (FUNCIONA 100% EN ADMINJS v7)
-  pages: {
-    generarMensualidades: {
-      label: 'Generar Mensualidades',
-      handler: async (request, response, context) => {
-        if (request.method === 'post') {
-          const { mes, cuota } = request.payload;
-
-          if (!mes || !cuota) {
-            return {
-              notice: {
-                message: 'Debes indicar mes y cuota',
-                type: 'error',
-              },
-            };
-          }
-
-          const miembros = await Miembros.findAll();
-
-          for (const m of miembros) {
-            await Mensualidad.create({
-              miembroId: m.id,
-              mes,
-              cuota,
-              pagado: false,
-              nota: '',
-            });
-          }
-
-          return {
-            notice: {
-              message: `Mensualidades generadas para ${miembros.length} miembros`,
-              type: 'success',
-            },
-          };
-        }
-
-        return {
-          html: `
-            <h1 style="font-family: sans-serif;">Generar mensualidades</h1>
-
-            <form method="POST" style="font-family: sans-serif; max-width: 400px;">
-              <label>Mes:</label>
-              <select name="mes" style="width: 100%; padding: 8px; margin-bottom: 12px;">
-                <option value="enero">Enero</option>
-                <option value="febrero">Febrero</option>
-                <option value="marzo">Marzo</option>
-                <option value="abril">Abril</option>
-                <option value="mayo">Mayo</option>
-                <option value="junio">Junio</option>
-                <option value="julio">Julio</option>
-                <option value="agosto">Agosto</option>
-                <option value="septiembre">Septiembre</option>
-                <option value="octubre">Octubre</option>
-                <option value="noviembre">Noviembre</option>
-                <option value="diciembre">Diciembre</option>
-              </select>
-
-              <label>Cuota:</label>
-              <input type="number" name="cuota" style="width: 100%; padding: 8px; margin-bottom: 12px;" />
-
-              <button type="submit" style="
-                padding: 10px 15px;
-                background: #2d3f21;
-                color: white;
-                border: none;
-                cursor: pointer;
-                width: 100%;
-              ">
-                Generar mensualidades
-              </button>
-            </form>
-          `,
-        };
-      },
-    },
-  },
-
   rootPath: '/admin',
 
   branding: {
@@ -406,6 +361,10 @@ try {
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
   await sequelize.sync({ alter: true });
+
+  // 🟩 GENERACIÓN AUTOMÁTICA AQUÍ
+  await generarMensualidadesAutomaticas();
+
   app.listen(port, () => {
     console.log(`Servidor escuchando en puerto ${port}`);
     console.log(`AdminJS en http://localhost:${port}${adminJs.options.rootPath}`);
