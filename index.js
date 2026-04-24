@@ -76,7 +76,7 @@ const adminJs = new AdminJS({
 },
 
 
-  {
+{
   resource: Mensualidad,
   options: {
     navigation: {
@@ -85,44 +85,43 @@ const adminJs = new AdminJS({
     },
 
     listProperties: [
-  'miembroId',
-  'mes',
-  'cuota',
-  'pagado',
-  'nota',
-  'id',
+      'miembroId',
+      'mes',
+      'cuota',
+      'pagado',
+      'nota',
+      'id',
     ],
 
     properties: {
-miembroId: {
-  reference: 'Miembros',
-  isVisible: {
-    list: true,
-    edit: true,
-    show: true,
-    filter: true,
-  },
-  populate: true,
-},
-mes: {
-  type: 'string',
-  availableValues: [
-    { value: 'enero', label: 'Enero' },
-    { value: 'febrero', label: 'Febrero' },
-    { value: 'marzo', label: 'Marzo' },
-    { value: 'abril', label: 'Abril' },
-    { value: 'mayo', label: 'Mayo' },
-    { value: 'junio', label: 'Junio' },
-    { value: 'julio', label: 'Julio' },
-    { value: 'agosto', label: 'Agosto' },
-    { value: 'septiembre', label: 'Septiembre' },
-    { value: 'octubre', label: 'Octubre' },
-    { value: 'noviembre', label: 'Noviembre' },
-    { value: 'diciembre', label: 'Diciembre' },
-  ],
-},
+      miembroId: {
+        reference: 'Miembros',
+        isVisible: {
+          list: true,
+          edit: true,
+          show: true,
+          filter: true,
+        },
+        populate: true,
+      },
 
-
+      mes: {
+        type: 'string',
+        availableValues: [
+          { value: 'enero', label: 'Enero' },
+          { value: 'febrero', label: 'Febrero' },
+          { value: 'marzo', label: 'Marzo' },
+          { value: 'abril', label: 'Abril' },
+          { value: 'mayo', label: 'Mayo' },
+          { value: 'junio', label: 'Junio' },
+          { value: 'julio', label: 'Julio' },
+          { value: 'agosto', label: 'Agosto' },
+          { value: 'septiembre', label: 'Septiembre' },
+          { value: 'octubre', label: 'Octubre' },
+          { value: 'noviembre', label: 'Noviembre' },
+          { value: 'diciembre', label: 'Diciembre' },
+        ],
+      },
 
       pagado: {
         type: 'boolean',
@@ -132,8 +131,82 @@ mes: {
         ],
       },
     },
+
+    // 🟩🟩🟩 ACCIÓN PERSONALIZADA AÑADIDA AQUÍ 🟩🟩🟩
+    actions: {
+      generarMes: {
+        actionType: 'resource',
+        icon: 'Add',
+        label: 'Generar mensualidades del mes',
+
+        handler: async (request, response, context) => {
+          const { h } = context;
+
+          // Si el usuario envía el formulario
+          if (request.method === 'post') {
+            const { mes, cuota } = request.payload;
+
+            if (!mes || !cuota) {
+              return {
+                notice: {
+                  message: 'Debes indicar mes y cuota',
+                  type: 'error',
+                },
+              };
+            }
+
+            const miembros = await Miembros.findAll();
+
+            for (const m of miembros) {
+              await Mensualidad.create({
+                miembroId: m.id,
+                mes,
+                cuota,
+                pagado: false,
+                nota: '',
+              });
+            }
+
+            return {
+              notice: {
+                message: `Mensualidades generadas para ${miembros.length} miembros`,
+                type: 'success',
+              },
+              redirectUrl: h.resourceUrl(),
+            };
+          }
+
+          return {};
+        },
+
+        // Campos del formulario
+        form: {
+          mes: {
+            type: 'string',
+            availableValues: [
+              { value: 'enero', label: 'Enero' },
+              { value: 'febrero', label: 'Febrero' },
+              { value: 'marzo', label: 'Marzo' },
+              { value: 'abril', label: 'Abril' },
+              { value: 'mayo', label: 'Mayo' },
+              { value: 'junio', label: 'Junio' },
+              { value: 'julio', label: 'Julio' },
+              { value: 'agosto', label: 'Agosto' },
+              { value: 'septiembre', label: 'Septiembre' },
+              { value: 'octubre', label: 'Octubre' },
+              { value: 'noviembre', label: 'Noviembre' },
+              { value: 'diciembre', label: 'Diciembre' },
+            ],
+          },
+          cuota: {
+            type: 'number',
+          },
+        },
+      },
+    },
   },
 },
+
 
 
 
