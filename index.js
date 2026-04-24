@@ -57,7 +57,11 @@ async function generarMensualidadesAutomaticas() {
       miembroId: m.id,
       reclutaId: null,
       mes: mesActual,
+<<<<<<< HEAD
       cuota: 3.50,
+=======
+      cuota: 3.50, // 👈 cuota por defecto
+>>>>>>> 4b8717e9 (asddddddrr)
       pagado: false,
       nota: '',
     });
@@ -148,6 +152,7 @@ const adminJs = new AdminJS({
         ],
 
         properties: {
+<<<<<<< HEAD
           miembroId: {
             reference: 'Miembros',
             isVisible: { list: true, edit: true, show: true, filter: true },
@@ -159,6 +164,19 @@ const adminJs = new AdminJS({
             isVisible: { list: true, edit: true, show: true, filter: true },
             populate: true,
           },
+=======
+        miembroId: {
+          reference: 'Miembros',
+          isVisible: { list: true, edit: true, show: true, filter: true },
+          populate: true,
+        },
+
+        reclutaId: {
+          reference: 'Reclutas',
+          isVisible: { list: true, edit: true, show: true, filter: true },
+          populate: true,
+        },
+>>>>>>> 4b8717e9 (asddddddrr)
 
           mes: {
             type: 'string',
@@ -208,8 +226,13 @@ const adminJs = new AdminJS({
         ],
         properties: {
           nombre: {
+<<<<<<< HEAD
             isTitle: true,
           },
+=======
+          isTitle: true,
+        },
+>>>>>>> 4b8717e9 (asddddddrr)
           fechaInicio: { type: 'string' },
           cursos: {
             type: 'string',
