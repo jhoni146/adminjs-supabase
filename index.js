@@ -21,7 +21,9 @@ Mensualidad.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
-const Components = {};
+const Components = {
+  Dashboard: componentLoader.add('Dashboard', './components/dashboard.jsx'),
+};
 
 const app = express();
 
@@ -87,6 +89,43 @@ async function generarMensualidadesAutomaticas() {
 
 // Configuración AdminJS
 const adminJs = new AdminJS({
+  dashboard: {
+  component: Components.Dashboard,
+  handler: async () => {
+    const totalMiembros = await Miembros.count();
+    const totalReclutas = await Reclutas.count();
+    const totalGeneral = totalMiembros + totalReclutas;
+
+    const fecha = new Date();
+    const meses = [
+      'enero','febrero','marzo','abril','mayo','junio',
+      'julio','agosto','septiembre','octubre','noviembre','diciembre'
+    ];
+    const mesActual = meses[fecha.getMonth()];
+
+    const pendientes = await Mensualidad.count({
+      where: { pagado: false, mes: mesActual }
+    });
+
+    const pendientesMiembros = await Mensualidad.count({
+      where: { pagado: false, mes: mesActual, miembroId: { not: null } }
+    });
+
+    const pendientesReclutas = await Mensualidad.count({
+      where: { pagado: false, mes: mesActual, reclutaId: { not: null } }
+    });
+
+    return {
+      totalMiembros,
+      totalReclutas,
+      totalGeneral,
+      pendientes,
+      pendientesMiembros,
+      pendientesReclutas,
+    };
+  }
+},
+
   componentLoader,
 
   resources: [
