@@ -22,7 +22,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
 const Components = {
-  Dashboard: componentLoader.add('Dashboard', './components/dashboard.jsx'),
+  Dashboard: componentLoader.add(
+  'Dashboard',
+  path.join(__dirname, 'components', 'dashboard.jsx')
+),
 };
 
 const app = express();
