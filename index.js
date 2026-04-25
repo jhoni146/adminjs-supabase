@@ -56,6 +56,7 @@ async function generarMensualidadesAutomaticas() {
     await Mensualidad.create({
       miembroId: m.id,
       reclutaId: null,
+      nombre: m.nombre,
       mes: mesActual,
       cuota: 3.50,
       pagado: false,
@@ -70,6 +71,7 @@ async function generarMensualidadesAutomaticas() {
     await Mensualidad.create({
       miembroId: null,
       reclutaId: r.id,
+      nombre: r.nombre,
       mes: mesActual,
       cuota: 3.50,
       pagado: false,
@@ -139,13 +141,12 @@ const adminJs = new AdminJS({
         },
 
         listProperties: [
-          'miembroId',
-          'reclutaId',
-          'mes',
-          'cuota',
-          'pagado',
-          'nota',
-          'id',
+        'nombre',
+        'mes',
+        'cuota',
+        'pagado',
+        'nota',
+        'id',
         ],
 
         properties: {
@@ -160,6 +161,10 @@ const adminJs = new AdminJS({
             isVisible: { list: true, edit: true, show: true, filter: true },
             populate: true,
           },
+          nombre: {
+          isTitle: true,
+          isVisible: { list: true, edit: false, show: true, filter: true },
+        },
 
           mes: {
             type: 'string',
