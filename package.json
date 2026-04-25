@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@adminjs/bundler": "^3.0.0",
     "@adminjs/design-system": "^4.1.1",
     "@adminjs/express": "^6.1.1",
     "@adminjs/sequelize": "^4.1.1",
