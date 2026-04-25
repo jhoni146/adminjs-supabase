@@ -406,6 +406,9 @@ const adminJs = new AdminJS({
   },
 });
 
+import { bundle } from '@adminjs/bundler';
+bundle(adminJs);
+
 // Autenticación
 const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
