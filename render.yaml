@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: adminjs-supabase
-    env: node
-    buildCommand: "npm install"
-    startCommand: "npm start"
-    nodeVersion: "18"
