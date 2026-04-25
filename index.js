@@ -91,45 +91,89 @@ const adminJs = new AdminJS({
 
   resources: [
     // 🟩 USUARIOS
-    {
-      resource: Usuarios,
-      options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'Menu',
-        },
-        properties: {
-          password: { type: 'password' },
-        },
-      },
-    },
-
-    // 🟩 MIEMBROS
-    {
-      resource: Miembros,
-      options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'User',
-        },
-
-        listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
-
-        properties: {
-          nombre: {
-            isTitle: true,
+      {
+        resource: Usuarios,
+        options: {
+          navigation: {
+            name: 'MENU',
+            icon: 'Menu',
           },
-          plataforma: {
-            type: 'string',
-            availableValues: [
-              { value: 'PLAYSTATION', label: 'PLAYSTATION' },
-              { value: 'XBOX', label: 'XBOX' },
-              { value: 'PC', label: 'PC' },
-            ],
+          properties: {
+            password: { type: 'password' },
           },
         },
       },
-    },
+
+      // 🟩 MIEMBROS
+  {
+    resource: Miembros,
+    options: {
+      navigation: {
+        name: 'MENU',
+        icon: 'User',
+      },
+
+      listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
+
+      properties: {
+        nombre: {
+          isTitle: true,
+        },
+        plataforma: {
+          type: 'string',
+          availableValues: [
+            { value: 'PLAYSTATION', label: 'PLAYSTATION' },
+            { value: 'XBOX', label: 'XBOX' },
+            { value: 'PC', label: 'PC' },
+          ],
+        },
+      },
+
+      actions: {
+        new: {
+          after: async (response, request, context) => {
+            const { record } = context;
+
+            if (!record) return response;
+
+            // 🟩 Mes actual
+            const fecha = new Date();
+            const meses = [
+              'enero','febrero','marzo','abril','mayo','junio',
+              'julio','agosto','septiembre','octubre','noviembre','diciembre'
+            ];
+            const mesActual = meses[fecha.getMonth()];
+
+            // 🟩 ¿Ya tiene mensualidad este miembro?
+            const existente = await Mensualidad.findOne({
+              where: {
+                miembroId: record.id(),
+                mes: mesActual
+              }
+            });
+
+            // 🟩 Si no existe → crearla
+            if (!existente) {
+              await Mensualidad.create({
+                miembroId: record.id(),
+                reclutaId: null,
+                nombre: record.param('nombre'),
+                mes: mesActual,
+                cuota: 3.50,
+                pagado: false,
+                nota: ''
+              });
+
+              console.log(`Mensualidad creada automáticamente para miembro ${record.param('nombre')}`);
+            }
+
+            return response;
+          }
+        }
+      }
+    }
+  },
+
 
     // 🟩 MENSUALIDADES (SIN ACCIONES)
     {
@@ -262,6 +306,45 @@ const adminJs = new AdminJS({
               }
               return request;
             },
+
+            after: async (response, request, context) => {
+              const { record } = context;
+
+              if (!record) return response;
+
+              // 🟩 Mes actual
+              const fecha = new Date();
+              const meses = [
+                'enero','febrero','marzo','abril','mayo','junio',
+                'julio','agosto','septiembre','octubre','noviembre','diciembre'
+              ];
+              const mesActual = meses[fecha.getMonth()];
+
+              // 🟩 ¿Ya tiene mensualidad este recluta?
+              const existente = await Mensualidad.findOne({
+                where: {
+                  reclutaId: record.id(),
+                  mes: mesActual
+                }
+              });
+
+              // 🟩 Si no existe → crearla
+              if (!existente) {
+                await Mensualidad.create({
+                  reclutaId: record.id(),
+                  miembroId: null,
+                  nombre: record.param('nombre'),
+                  mes: mesActual,
+                  cuota: 3.50,
+                  pagado: false,
+                  nota: ''
+                });
+
+                console.log(`Mensualidad creada automáticamente para recluta ${record.param('nombre')}`);
+              }
+
+              return response;
+            }
           },
 
           edit: {
