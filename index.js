@@ -251,6 +251,8 @@ const adminJs = new AdminJS({
         icon: 'Check',
         label: 'Marcar como pagado',
         guard: '¿Marcar estas mensualidades como pagadas?',
+        isAccessible: true,
+        isVisible: true,
 
         handler: async (request, response, context) => {
           const { records } = context;
@@ -265,9 +267,7 @@ const adminJs = new AdminJS({
           }
 
           for (const record of records) {
-            await record.update({
-              pagado: true,
-            });
+            await record.update({ pagado: true });
           }
 
           return {
@@ -278,10 +278,9 @@ const adminJs = new AdminJS({
             },
             redirectUrl: '/admin/resources/Mensualidades',
           };
-
-
         }
       }
+
     }
   }
 },
