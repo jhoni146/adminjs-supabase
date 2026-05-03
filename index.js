@@ -247,44 +247,42 @@ const adminJs = new AdminJS({
 
     // 🟩 ACCIONES SIEMPRE AL FINAL
     actions: {
-    marcarPagado: {
-      actionType: 'resource',
-      icon: 'Check',
-      label: 'Marcar seleccionados como pagados',
-      guard: '¿Marcar estas mensualidades como pagadas?',
-      isAccessible: true,
-      isVisible: true,
+      marcarPagado: {
+        actionType: 'list',
+        icon: 'Check',
+        label: 'Marcar seleccionados como pagados',
+        showFilter: false,
+        isAccessible: true,
+        isVisible: true,
 
-      handler: async (request, response, context) => {
-        // AdminJS pasa los IDs seleccionados en query.recordIds
-        const ids = request.query.recordIds?.split(',') || [];
+        handler: async (request, response, context) => {
+          const ids = request.query.recordIds?.split(',') || [];
 
-        if (ids.length === 0) {
+          if (ids.length === 0) {
+            return {
+              redirectUrl: '/admin/resources/Mensualidades',
+              notice: {
+                message: 'No seleccionaste mensualidades',
+                type: 'error',
+              },
+            };
+          }
+
+          const records = await context.resource.findMany(ids);
+
+          for (const record of records) {
+            await record.update({ pagado: true });
+          }
+
           return {
             redirectUrl: '/admin/resources/Mensualidades',
             notice: {
-              message: 'No seleccionaste mensualidades',
-              type: 'error',
+              message: `Se marcaron ${records.length} mensualidades como pagadas`,
+              type: 'success',
             },
           };
         }
-
-        // Obtener los registros manualmente
-        const records = await context.resource.findMany(ids);
-
-        for (const record of records) {
-          await record.update({ pagado: true });
-        }
-
-        return {
-          redirectUrl: '/admin/resources/Mensualidades',
-          notice: {
-            message: `Se marcaron ${records.length} mensualidades como pagadas`,
-            type: 'success',
-          },
-        };
       }
-    }
 
     }
   }
