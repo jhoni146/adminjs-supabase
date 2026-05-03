@@ -17,15 +17,14 @@ Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
 Reclutas.hasMany(Mensualidades, { foreignKey: 'reclutaId' });
 Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 
-const emptyComponent = componentLoader.add('Empty', './adminjs/components/empty.jsx');
-
-
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
 const Components = {};
+
+const emptyComponent = componentLoader.add('Empty', './adminjs/components/empty.jsx');
 
 const app = express();
 
