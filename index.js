@@ -26,7 +26,11 @@ const emptyPath = path.join(__dirname, 'adminjs/components/empty.jsx');
 const componentLoader = new ComponentLoader();
 const Components = {};
 
-const emptyComponent = componentLoader.add('Empty', emptyPath);
+const emptyComponent = componentLoader.add(
+  'Empty',
+  path.join(__dirname, 'adminjs/components/empty.js')
+);
+
 
 const app = express();
 
@@ -255,7 +259,7 @@ const adminJs = new AdminJS({
           icon: 'Check',
           label: 'Marcar como pagado',
           guard: '¿Marcar estas mensualidades como pagadas?',
-          component: false,
+          component: 'Empty',
 
           handler: async (request, response, context) => {
             const { records } = context;
