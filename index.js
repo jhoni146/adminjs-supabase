@@ -516,7 +516,7 @@ const port = process.env.PORT || 3000;
 try {
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
-  await sequelize.sync({ alter: true });
+  await sequelize.sync();
 
   // 🟩 GENERACIÓN AUTOMÁTICA AQUÍ
   await generarMensualidadesAutomaticas();
