@@ -10,12 +10,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
-import Mensualidad from './models/Mensualidad.js';
+import Mensualidades from './models/Mensualidad.js';
 
-Miembros.hasMany(Mensualidad, { foreignKey: 'miembroId' });
-Mensualidad.belongsTo(Miembros, { foreignKey: 'miembroId' });
-Reclutas.hasMany(Mensualidad, { foreignKey: 'reclutaId' });
-Mensualidad.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
+Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
+Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
+Reclutas.hasMany(Mensualidades, { foreignKey: 'reclutaId' });
+Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
+
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -42,7 +43,7 @@ async function generarMensualidadesAutomaticas() {
   const mesActual = meses[fecha.getMonth()];
 
   // ¿Ya existen mensualidades de este mes?
-  const existentes = await Mensualidad.findOne({ where: { mes: mesActual } });
+  const existentes = await Mensualidades.findOne({ where: { mes: mesActual } });
 
   if (existentes) {
     console.log(`Mensualidades de ${mesActual} ya existen. No se generan.`);
@@ -53,7 +54,7 @@ async function generarMensualidadesAutomaticas() {
   const miembros = await Miembros.findAll();
 
   for (const m of miembros) {
-    await Mensualidad.create({
+    await Mensualidades.create({
       miembroId: m.id,
       reclutaId: null,
       nombre: m.nombre,
@@ -68,7 +69,7 @@ async function generarMensualidadesAutomaticas() {
   const reclutas = await Reclutas.findAll();
 
   for (const r of reclutas) {
-    await Mensualidad.create({
+    await Mensualidades.create({
       miembroId: null,
       reclutaId: r.id,
       nombre: r.nombre,
@@ -145,7 +146,7 @@ const adminJs = new AdminJS({
             const mesActual = meses[fecha.getMonth()];
 
             // 🟩 ¿Ya tiene mensualidad este miembro?
-            const existente = await Mensualidad.findOne({
+            const existente = await Mensualidades.findOne({
               where: {
                 miembroId: record.id(),
                 mes: mesActual
@@ -154,7 +155,7 @@ const adminJs = new AdminJS({
 
             // 🟩 Si no existe → crearla
             if (!existente) {
-              await Mensualidad.create({
+              await Mensualidades.create({
                 miembroId: record.id(),
                 reclutaId: null,
                 nombre: record.param('nombre'),
@@ -177,10 +178,8 @@ const adminJs = new AdminJS({
 
     // 🟩 MENSUALIDADES (SIN ACCIONES)
 {
-  resource: Mensualidad,
+  resource: Mensualidades,
   options: {
-    id: 'Mensualidades',
-    
     navigation: {
       name: 'MENU',
       icon: 'Money',
@@ -366,7 +365,7 @@ const adminJs = new AdminJS({
               const mesActual = meses[fecha.getMonth()];
 
               // 🟩 ¿Ya tiene mensualidad este recluta?
-              const existente = await Mensualidad.findOne({
+              const existente = await Mensualidades.findOne({
                 where: {
                   reclutaId: record.id(),
                   mes: mesActual
@@ -375,7 +374,7 @@ const adminJs = new AdminJS({
 
               // 🟩 Si no existe → crearla
               if (!existente) {
-                await Mensualidad.create({
+                await Mensualidades.create({
                   reclutaId: record.id(),
                   miembroId: null,
                   nombre: record.param('nombre'),
