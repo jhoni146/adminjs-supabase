@@ -249,6 +249,11 @@ const adminJs = new AdminJS({
 
     // 🟩 ACCIONES SIEMPRE AL FINAL
     actions: {
+        list: {
+          isAccessible: true,
+          isVisible: true,
+          bulkActions: ['marcarPagado'],   // 🔥 CLAVE
+        },
       marcarPagado: {
         actionType: 'bulk',
         icon: 'Check',
