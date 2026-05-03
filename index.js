@@ -255,6 +255,9 @@ const adminJs = new AdminJS({
         isAccessible: true,
         isVisible: true,
 
+        // 🔥 CLAVE: NO PERMITIR QUE ADMINJS INTENTE MOSTRAR UNA VISTA
+        component: false,
+
         handler: async (request, response, context) => {
           const { records } = context;
 
@@ -263,16 +266,16 @@ const adminJs = new AdminJS({
           }
 
           return {
+            redirectUrl: context.h.resourceUrl(),
             notice: {
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
-
-            // 🔥 ESTA ES LA ÚNICA LÍNEA QUE ARREGLA TU PROBLEMA
-            redirectUrl: context.h.resourceUrl(),
           };
         }
       }
+
+
 
     }
   }
