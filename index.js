@@ -17,6 +17,9 @@ Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
 Reclutas.hasMany(Mensualidades, { foreignKey: 'reclutaId' });
 Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 
+AdminJS.bundle('./adminjs/components/empty.jsx');
+
+
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -252,10 +255,8 @@ const adminJs = new AdminJS({
         icon: 'Check',
         label: 'Marcar como pagado',
         guard: '¿Marcar estas mensualidades como pagadas?',
-        isAccessible: true,
-        isVisible: true,
 
-        component: false,
+        component: AdminJS.bundle('./adminjs/components/empty.jsx'),
 
         handler: async (request, response, context) => {
           const { records } = context;
@@ -265,21 +266,14 @@ const adminJs = new AdminJS({
           }
 
           return {
+            redirectUrl: context.h.resourceUrl(),
             notice: {
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
-            redirectUrl: context.h.resourceUrl(),
-
-            // 🔥 FIX DEFINITIVO
-            refresh: true,
-            forceRefresh: true,
-            record: null,
-            records: []
           };
         }
       }
-
 
     }
   }
