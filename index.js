@@ -184,7 +184,6 @@ const adminJs = new AdminJS({
 {
   resource: Mensualidades,
   options: {
-    resourceId: 'mensualidades',
     navigation: {
       name: 'MENU',
       icon: 'Money',
@@ -250,38 +249,32 @@ const adminJs = new AdminJS({
     },
 
     // 🟩 ACCIONES SIEMPRE AL FINAL
-    actions: {
-        list: {
-          isAccessible: true,
-          isVisible: true,
-          bulkActions: ['marcarPagado'],   // 🔥 CLAVE
-        },
-      marcarPagado: {
-        actionType: 'bulk',
-        icon: 'Check',
-        label: 'Marcar como pagado',
-        guard: '¿Marcar estas mensualidades como pagadas?',
+      actions: {
+        marcarPagado: {
+          actionType: 'bulk',
+          icon: 'Check',
+          label: 'Marcar como pagado',
+          guard: '¿Marcar estas mensualidades como pagadas?',
+          component: emptyComponent,
 
-        component: emptyComponent,
+          handler: async (request, response, context) => {
+            const { records } = context;
 
-        handler: async (request, response, context) => {
-          const { records } = context;
+            for (const record of records) {
+              await record.update({ pagado: true });
+            }
 
-          for (const record of records) {
-            await record.update({ pagado: true });
+            return {
+              redirectUrl: context.h.resourceUrl(),
+              notice: {
+                message: `Se marcaron ${records.length} mensualidades como pagadas`,
+                type: 'success',
+              },
+            };
           }
-
-          return {
-            redirectUrl: context.h.resourceUrl(),
-            notice: {
-              message: `Se marcaron ${records.length} mensualidades como pagadas`,
-              type: 'success',
-            },
-          };
         }
       }
 
-    }
   }
 },
 
