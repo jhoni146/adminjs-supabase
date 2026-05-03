@@ -271,11 +271,13 @@ const adminJs = new AdminJS({
           }
 
           return {
+            records,
             notice: {
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
           };
+
         }
       }
     }
