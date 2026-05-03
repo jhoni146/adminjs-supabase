@@ -260,31 +260,32 @@ const adminJs = new AdminJS({
         isAccessible: true,
         isVisible: true,
 
-        handler: async (request, response, context) => {
-          const { records } = context;
+    handler: async (request, response, context) => {
+      const { records } = context;
 
-          if (!records || records.length === 0) {
-            return {
-              notice: {
-                message: 'No seleccionaste mensualidades',
-                type: 'error',
-              },
-            };
-          }
+      if (!records || records.length === 0) {
+        return {
+          redirectUrl: '/admin/resources/Mensualidades',
+          notice: {
+            message: 'No seleccionaste mensualidades',
+            type: 'error',
+          },
+        };
+      }
 
-          for (const record of records) {
-            await record.update({ pagado: true });
-          }
+      for (const record of records) {
+        await record.update({ pagado: true });
+      }
 
-          return {
-            records,
-            notice: {
-              message: `Se marcaron ${records.length} mensualidades como pagadas`,
-              type: 'success',
-            },
-            redirectUrl: '/admin/resources/Mensualidades',
-          };
-        }
+      return {
+        redirectUrl: '/admin/resources/Mensualidades',
+        notice: {
+          message: `Se marcaron ${records.length} mensualidades como pagadas`,
+          type: 'success',
+        },
+      };
+    }
+
       }
 
     }
