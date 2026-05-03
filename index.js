@@ -259,7 +259,7 @@ const adminJs = new AdminJS({
           icon: 'Check',
           label: 'Marcar como pagado',
           guard: '¿Marcar estas mensualidades como pagadas?',
-          component: 'Empty',
+          component: false,
 
           handler: async (request, response, context) => {
             const { records } = context;
