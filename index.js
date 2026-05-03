@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
-import Mensualidades from './models/Mensualidad.js';
+import Mensualidades from './models/Mensualidades.js';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
