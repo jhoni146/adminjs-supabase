@@ -179,6 +179,8 @@ const adminJs = new AdminJS({
 {
   resource: Mensualidad,
   options: {
+    id: 'Mensualidades',
+    
     navigation: {
       name: 'MENU',
       icon: 'Money',
