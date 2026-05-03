@@ -17,7 +17,7 @@ Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
 Reclutas.hasMany(Mensualidades, { foreignKey: 'reclutaId' });
 Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 
-AdminJS.bundle('./adminjs/components/empty.jsx');
+const emptyComponent = componentLoader.add('Empty', './adminjs/components/empty.jsx');
 
 
 
@@ -256,7 +256,7 @@ const adminJs = new AdminJS({
         label: 'Marcar como pagado',
         guard: '¿Marcar estas mensualidades como pagadas?',
 
-        component: AdminJS.bundle('./adminjs/components/empty.jsx'),
+        component: emptyComponent,
 
         handler: async (request, response, context) => {
           const { records } = context;
