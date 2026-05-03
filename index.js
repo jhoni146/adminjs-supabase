@@ -255,9 +255,6 @@ const adminJs = new AdminJS({
         isAccessible: true,
         isVisible: true,
 
-        // 🔥 CLAVE: NO PERMITIR QUE ADMINJS INTENTE MOSTRAR UNA VISTA
-        component: false,
-
         handler: async (request, response, context) => {
           const { records } = context;
 
