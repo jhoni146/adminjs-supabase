@@ -255,6 +255,8 @@ const adminJs = new AdminJS({
         isAccessible: true,
         isVisible: true,
 
+        component: false,
+
         handler: async (request, response, context) => {
           const { records } = context;
 
@@ -263,15 +265,20 @@ const adminJs = new AdminJS({
           }
 
           return {
-            redirectUrl: context.h.resourceUrl(),
             notice: {
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
+            redirectUrl: context.h.resourceUrl(),
+
+            // 🔥 FIX DEFINITIVO
+            refresh: true,
+            forceRefresh: true,
+            record: null,
+            records: []
           };
         }
       }
-
 
 
     }
