@@ -247,34 +247,19 @@ const adminJs = new AdminJS({
 
     // 🟩 ACCIONES SIEMPRE AL FINAL
     actions: {
-        list: {
-          isAccessible: true,
-          isVisible: true,
-          bulkActions: ['marcarPagado'],   // 🔥 CLAVE PARA QUE APAREZCA EL BOTÓN
-        },
-        
       marcarPagado: {
-        actionType: 'list',
+        actionType: 'bulk',
         icon: 'Check',
-        label: 'Marcar seleccionados como pagados',
-        showFilter: false,
+        label: 'Marcar como pagado',
+        guard: '¿Marcar estas mensualidades como pagadas?',
         isAccessible: true,
         isVisible: true,
 
+        // 🔥 CLAVE: NO PERMITIR QUE ADMINJS INTENTE MOSTRAR UNA VISTA
+        component: false,
+
         handler: async (request, response, context) => {
-          const ids = request.query.recordIds?.split(',') || [];
-
-          if (ids.length === 0) {
-            return {
-              redirectUrl: '/admin/resources/Mensualidades',
-              notice: {
-                message: 'No seleccionaste mensualidades',
-                type: 'error',
-              },
-            };
-          }
-
-          const records = await context.resource.findMany(ids);
+          const { records } = context;
 
           for (const record of records) {
             await record.update({ pagado: true });
