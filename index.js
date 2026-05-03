@@ -184,6 +184,47 @@ const adminJs = new AdminJS({
           icon: 'Money',
         },
 
+        sort: {
+        sortBy: 'mes',
+        direction: 'desc'
+      },
+
+      actions: {
+      marcarPagado: {
+        actionType: 'bulk',
+        icon: 'Check',
+        label: 'Marcar como pagado',
+        guard: '¿Marcar estas mensualidades como pagadas?',
+        
+        handler: async (request, response, context) => {
+          const { records } = context;
+
+          if (!records || records.length === 0) {
+            return {
+              notice: {
+                message: 'No seleccionaste mensualidades',
+                type: 'error',
+              },
+            };
+          }
+
+          for (const record of records) {
+            await record.update({
+              pagado: true,
+            });
+          }
+
+          return {
+            notice: {
+              message: `Se marcaron ${records.length} mensualidades como pagadas`,
+              type: 'success',
+            },
+          };
+        }
+      }
+    },
+
+
         listProperties: [
         'nombre',
         'mes',
