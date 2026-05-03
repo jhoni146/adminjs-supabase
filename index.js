@@ -176,7 +176,7 @@ const adminJs = new AdminJS({
   },
 
 
-    // 🟩 MENSUALIDADES (SIN ACCIONES)
+    // 🟩 MENSUALIDADES
 {
   resource: Mensualidades,
   options: {
