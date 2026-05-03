@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 
-const Mensualidad = sequelize.define('Mensualidad', {
+const Mensualidades = sequelize.define('Mensualidades', {
   cuota: {
     type: DataTypes.FLOAT,
     allowNull: false,
@@ -34,4 +34,4 @@ const Mensualidad = sequelize.define('Mensualidad', {
   tableName: 'Mensualidades',   // 👈 NOMBRE REAL DE LA TABLA
 });
 
-export default Mensualidad;
+export default Mensualidades;
