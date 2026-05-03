@@ -263,11 +263,13 @@ const adminJs = new AdminJS({
           }
 
           return {
-            redirectUrl: context.h.resourceUrl(),   // 🔥 ESTA ES LA CLAVE
             notice: {
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
+
+            // 🔥 ESTA ES LA ÚNICA LÍNEA QUE ARREGLA TU PROBLEMA
+            redirectUrl: context.h.resourceUrl(),
           };
         }
       }
