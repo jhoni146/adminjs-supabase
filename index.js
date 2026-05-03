@@ -176,26 +176,81 @@ const adminJs = new AdminJS({
 
 
     // 🟩 MENSUALIDADES (SIN ACCIONES)
-    {
-      resource: Mensualidad,
-      options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'Money',
-        },
+{
+  resource: Mensualidad,
+  options: {
+    navigation: {
+      name: 'MENU',
+      icon: 'Money',
+    },
 
-        sort: {
-        sortBy: 'mes',
-        direction: 'desc'
+    sort: {
+      sortBy: 'mes',
+      direction: 'desc'
+    },
+
+    listProperties: [
+      'nombre',
+      'mes',
+      'cuota',
+      'pagado',
+      'nota',
+      'id',
+    ],
+
+    properties: {
+      miembroId: {
+        reference: 'Miembros',
+        isVisible: { list: true, edit: true, show: true, filter: true },
+        populate: true,
       },
 
-      actions: {
+      reclutaId: {
+        reference: 'Reclutas',
+        isVisible: { list: true, edit: true, show: true, filter: true },
+        populate: true,
+      },
+
+      nombre: {
+        isTitle: true,
+        isVisible: { list: true, edit: false, show: true, filter: true },
+      },
+
+      mes: {
+        type: 'string',
+        availableValues: [
+          { value: 'enero', label: 'Enero' },
+          { value: 'febrero', label: 'Febrero' },
+          { value: 'marzo', label: 'Marzo' },
+          { value: 'abril', label: 'Abril' },
+          { value: 'mayo', label: 'Mayo' },
+          { value: 'junio', label: 'Junio' },
+          { value: 'julio', label: 'Julio' },
+          { value: 'agosto', label: 'Agosto' },
+          { value: 'septiembre', label: 'Septiembre' },
+          { value: 'octubre', label: 'Octubre' },
+          { value: 'noviembre', label: 'Noviembre' },
+          { value: 'diciembre', label: 'Diciembre' },
+        ],
+      },
+
+      pagado: {
+        type: 'boolean',
+        availableValues: [
+          { value: true, label: 'Pagado' },
+          { value: false, label: 'No pagado' },
+        ],
+      },
+    },
+
+    // 🟩 ACCIONES SIEMPRE AL FINAL
+    actions: {
       marcarPagado: {
         actionType: 'bulk',
         icon: 'Check',
         label: 'Marcar como pagado',
         guard: '¿Marcar estas mensualidades como pagadas?',
-        
+
         handler: async (request, response, context) => {
           const { records } = context;
 
@@ -222,63 +277,10 @@ const adminJs = new AdminJS({
           };
         }
       }
-    },
+    }
+  }
+},
 
-
-        listProperties: [
-        'nombre',
-        'mes',
-        'cuota',
-        'pagado',
-        'nota',
-        'id',
-        ],
-
-        properties: {
-          miembroId: {
-            reference: 'Miembros',
-            isVisible: { list: true, edit: true, show: true, filter: true },
-            populate: true,
-          },
-
-          reclutaId: {
-            reference: 'Reclutas',
-            isVisible: { list: true, edit: true, show: true, filter: true },
-            populate: true,
-          },
-          nombre: {
-          isTitle: true,
-          isVisible: { list: true, edit: false, show: true, filter: true },
-        },
-
-          mes: {
-            type: 'string',
-            availableValues: [
-              { value: 'enero', label: 'Enero' },
-              { value: 'febrero', label: 'Febrero' },
-              { value: 'marzo', label: 'Marzo' },
-              { value: 'abril', label: 'Abril' },
-              { value: 'mayo', label: 'Mayo' },
-              { value: 'junio', label: 'Junio' },
-              { value: 'julio', label: 'Julio' },
-              { value: 'agosto', label: 'Agosto' },
-              { value: 'septiembre', label: 'Septiembre' },
-              { value: 'octubre', label: 'Octubre' },
-              { value: 'noviembre', label: 'Noviembre' },
-              { value: 'diciembre', label: 'Diciembre' },
-            ],
-          },
-
-          pagado: {
-            type: 'boolean',
-            availableValues: [
-              { value: true, label: 'Pagado' },
-              { value: false, label: 'No pagado' },
-            ],
-          },
-        },
-      },
-    },
 
     // 🟩 RECLUTAS
     {
