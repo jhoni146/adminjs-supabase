@@ -20,11 +20,13 @@ Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const emptyPath = path.join(__dirname, 'adminjs/components/empty.jsx');
+
 
 const componentLoader = new ComponentLoader();
 const Components = {};
 
-const emptyComponent = componentLoader.add('Empty', './adminjs/components/empty.jsx');
+const emptyComponent = componentLoader.add('Empty', emptyPath);
 
 const app = express();
 
