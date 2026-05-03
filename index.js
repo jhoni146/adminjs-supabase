@@ -265,13 +265,14 @@ const adminJs = new AdminJS({
             }
 
             return {
-              redirectUrl: context.h.resourceUrl(),
+              redirectUrl: `${context.h.resourceUrl()}?refresh=${Date.now()}`,
               notice: {
                 message: `Se marcaron ${records.length} mensualidades como pagadas`,
                 type: 'success',
               },
             };
           }
+
         }
       }
 
