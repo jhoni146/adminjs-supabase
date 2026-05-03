@@ -276,7 +276,9 @@ const adminJs = new AdminJS({
               message: `Se marcaron ${records.length} mensualidades como pagadas`,
               type: 'success',
             },
+            redirectUrl: '/admin/resources/Mensualidades',
           };
+
 
         }
       }
