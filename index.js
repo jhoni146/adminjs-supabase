@@ -416,7 +416,56 @@ const adminJs = new AdminJS({
               return request;
             },
           },
-        },
+
+          // 🟩 NUEVA ACCIÓN: MOVER A MIEMBRO
+          moverAMiembro: {
+            actionType: 'record',
+            icon: 'UserPlus',
+            label: 'Mover a Miembro',
+            guard: '¿Seguro que quieres convertir este recluta en miembro?',
+            component: false, // 🔥 SIN COMPONENTE → FUNCIONA EN RENDER
+
+            handler: async (request, response, context) => {
+              const { record, h } = context;
+
+              if (!record) {
+                throw new Error('No se encontró el recluta.');
+              }
+
+              const recluta = record.params;
+
+              // 1️⃣ Crear miembro con los datos del recluta
+              const nuevoMiembro = await Miembros.create({
+                nombre: recluta.nombre,
+                fechaInicio: recluta.fechaInicio,
+                plataforma: recluta.plataforma,
+              });
+
+              // 2️⃣ Mover mensualidades del recluta al miembro
+              const mensualidades = await Mensualidades.findAll({
+                where: { reclutaId: recluta.id }
+              });
+
+              for (const m of mensualidades) {
+                await m.update({
+                  miembroId: nuevoMiembro.id,
+                  reclutaId: null
+                });
+              }
+
+              // 3️⃣ Eliminar el recluta original
+              await record.delete();
+
+              return {
+                redirectUrl: h.resourceUrl({ resourceId: 'Miembros' }),
+                notice: {
+                  message: `Recluta movido a miembro correctamente`,
+                  type: 'success',
+                },
+              };
+            }
+          }
+        }
       },
     },
   ],
