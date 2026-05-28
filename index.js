@@ -423,7 +423,9 @@ const adminJs = new AdminJS({
             icon: 'UserPlus',
             label: 'Mover a Miembro',
             guard: '¿Seguro que quieres convertir este recluta en miembro?',
-            component: false, // 🔥 SIN COMPONENTE → FUNCIONA EN RENDER
+            component: false,
+            isAccessible: true,
+            isVisible: true,
 
             handler: async (request, response, context) => {
               const { record, h } = context;
@@ -456,8 +458,9 @@ const adminJs = new AdminJS({
               // 3️⃣ Eliminar el recluta original
               await record.delete();
 
+              // 4️⃣ Redirigir correctamente (ID en minúsculas)
               return {
-                redirectUrl: h.resourceUrl({ resourceId: 'Miembros' }),
+                redirectUrl: h.resourceUrl({ resourceId: 'miembros' }),
                 notice: {
                   message: `Recluta movido a miembro correctamente`,
                   type: 'success',
