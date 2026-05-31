@@ -428,7 +428,7 @@ const adminJs = new AdminJS({
             isVisible: true,
 
             handler: async (request, response, context) => {
-              const { record, h } = context;
+              const { record, h, resource } = context;
 
               if (!record) {
                 throw new Error('No se encontró el recluta.');
@@ -455,14 +455,14 @@ const adminJs = new AdminJS({
                 });
               }
 
-              // 3️⃣ Eliminar el recluta original
-              await record.delete();
+              // 3️⃣ Eliminar directamente con Sequelize (NO record.delete())
+              await Reclutas.destroy({ where: { id: recluta.id } });
 
-              // 4️⃣ Redirigir correctamente (ID en minúsculas)
+              // 4️⃣ Redirect — usa la URL base de admin + ruta del recurso
               return {
-                redirectUrl: h.resourceUrl({ resourceId: 'miembros' }),
+                redirectUrl: '/admin/resources/Miembros',
                 notice: {
-                  message: `Recluta movido a miembro correctamente`,
+                  message: 'Recluta movido a miembro correctamente',
                   type: 'success',
                 },
               };
