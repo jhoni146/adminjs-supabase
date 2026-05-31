@@ -460,7 +460,7 @@ const adminJs = new AdminJS({
 
               // 4️⃣ Redirect — usa la URL base de admin + ruta del recurso
               return {
-                redirectUrl: '/admin/resources/Miembros',
+                record: record.toJSON(),
                 notice: {
                   message: 'Recluta movido a miembro correctamente',
                   type: 'success',
