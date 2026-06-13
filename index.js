@@ -564,7 +564,7 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
 app.use(adminJs.options.rootPath, router);
 
 app.get('/', (req, res) => {
-  res.send('AdminJS + Supabase + Render funcionando');
+  res.redirect('/admin');
 });
 
 const port = process.env.PORT || 3000;
