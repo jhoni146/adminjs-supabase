@@ -549,13 +549,20 @@ const adminJs = new AdminJS({
           // ── LIST: inyectar votosDisplay en cada record ──────────
           list: {
             after: async (response) => {
-              if (response.records) {
-                response.records = response.records.map((record) => {
-                  const votos = record.params?.votos || {};
-                  record.params.votosDisplay = formatearVotos(votos);
-                  return record;
-                });
-              }
+              if (!response.records) return response;
+
+              // Cargar todos los ids de esta página de una sola query
+              const ids = response.records.map(r => r.params.id).filter(Boolean);
+              const filas = await Votaciones.findAll({ where: { id: ids } });
+              const porId = {};
+              for (const f of filas) porId[f.id] = f.votos || {};
+
+              response.records = response.records.map((record) => {
+                const votos = porId[record.params.id] || {};
+                record.params.votosDisplay = formatearVotos(votos);
+                return record;
+              });
+
               return response;
             },
           },
@@ -563,10 +570,15 @@ const adminJs = new AdminJS({
           // ── SHOW: inyectar votosDisplay en el record ─────────────
           show: {
             after: async (response) => {
-              if (response.record) {
-                const votos = response.record.params?.votos || {};
+              if (!response.record) return response;
+
+              const id = response.record.params?.id;
+              if (id) {
+                const fila = await Votaciones.findByPk(id);
+                const votos = fila?.votos || {};
                 response.record.params.votosDisplay = formatearVotos(votos);
               }
+
               return response;
             },
           },
