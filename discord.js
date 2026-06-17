@@ -3,6 +3,7 @@ import { REST, Routes } from 'discord.js';
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const DISCORD_CANAL = process.env.DISCORD_CANAL_ID;
 const DISCORD_ROL   = process.env.DISCORD_ROL_ID;
+const APP_URL       = (process.env.APP_URL || 'https://reclutas.clanfear.es').replace(/\/$/, '');
 
 function mencionRol() {
   return DISCORD_ROL ? `<@&${DISCORD_ROL}>` : '';
@@ -35,21 +36,24 @@ async function enviarMensaje(content) {
 
 // ─────────────────────────────────────────────────────────────────
 // 🟩 Nueva(s) votación(es) generada(s)
+// votaciones: [{ nombre, id }]
 // ─────────────────────────────────────────────────────────────────
-export async function notificarNuevasVotaciones(nombresReclutas) {
-  if (!nombresReclutas?.length) return;
+export async function notificarNuevasVotaciones(votaciones) {
+  if (!votaciones?.length) return;
 
-  console.log(`[Discord] notificarNuevasVotaciones llamada con: ${nombresReclutas.join(', ')}`);
+  console.log(`[Discord] notificarNuevasVotaciones llamada con: ${votaciones.map(v => v.nombre).join(', ')}`);
 
-  const lista = nombresReclutas.map(n => `• **${n}**`).join('\n');
-  const rol   = mencionRol();
+  const lista = votaciones
+    .map(v => `• **${v.nombre}** → ${APP_URL}/admin/resources/Votaciones/records/${v.id}/show`)
+    .join('\n');
+  const rol = mencionRol();
 
   await enviarMensaje(
     `${rol ? rol + '\n' : ''}` +
     `⚔️ **Nueva votación de admisión** ⚔️\n` +
     `Los siguientes reclutas han cumplido 2 meses y están listos para ser evaluados:\n\n` +
     `${lista}\n\n` +
-    `Entrad en el panel de administración y emitid vuestro voto ✅ / ❌`
+    `Entrad en el enlace y emitid vuestro voto ✅ / ❌`
   );
 }
 

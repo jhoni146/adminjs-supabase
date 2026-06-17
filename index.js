@@ -124,7 +124,7 @@ async function generarVotacionesAutomaticas() {
   }
 
   let generadas = 0;
-  const nombresNuevos = [];  // Para notificación Discord
+  const votacionesNuevas = [];  // { nombre, id } para notificación Discord
 
   for (const recluta of reclutas) {
     const fechaInicio = parsearFechaRecluta(recluta.fechaInicio);
@@ -149,7 +149,8 @@ async function generarVotacionesAutomaticas() {
     });
 
     generadas++;
-    nombresNuevos.push(recluta.nombre);
+    const votacionCreada = await Votaciones.findOne({ where: { reclutaId: recluta.id } });
+    votacionesNuevas.push({ nombre: recluta.nombre, id: votacionCreada.id });
     console.log(`✅ Votación generada para "${recluta.nombre}" — usuarios: ${Object.keys(votosIniciales).join(', ')}`);
   }
 
@@ -158,7 +159,7 @@ async function generarVotacionesAutomaticas() {
   } else {
     console.log(`Total votaciones creadas: ${generadas}`);
     // Notificar a Discord con todos los reclutas nuevos de una sola vez
-    await notificarNuevasVotaciones(nombresNuevos);
+    await notificarNuevasVotaciones(votacionesNuevas);
   }
 }
 
