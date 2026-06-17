@@ -141,14 +141,11 @@ async function generarVotacionesAutomaticas() {
       votosIniciales[u.email] = 'Pendiente';
     }
 
-    const fechaLimite = new Date(hoy);
-    fechaLimite.setDate(fechaLimite.getDate() + 7);
-
     await Votaciones.create({
       reclutaId: recluta.id,
       reclutaNombre: recluta.nombre,
       votos: votosIniciales,
-      fechaLimite: fechaLimite.toISOString().split('T')[0],
+      fechaLimite: null,  // Sin caducidad — la votación queda abierta indefinidamente
     });
 
     generadas++;
@@ -195,7 +192,58 @@ function iniciarSchedulerVotaciones() {
 
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 HELPER: formatear votos para mostrar en AdminJS
+// 🟩 FUNCIÓN COMPARTIDA: lógica de mover recluta → miembro
+// Usada tanto por el botón manual "Mover a Miembro" como por la
+// promoción automática al alcanzar mayoría de votos Apto.
+// ─────────────────────────────────────────────────────────────────
+async function ejecutarMoverAMiembro(reclutaId) {
+  const recluta = await Reclutas.findByPk(reclutaId);
+  if (!recluta) throw new Error(`Recluta con id ${reclutaId} no encontrado.`);
+
+  const nuevoMiembro = await Miembros.create({
+    nombre:      recluta.nombre,
+    fechaInicio: recluta.fechaInicio,
+    plataforma:  recluta.plataforma,
+  });
+
+  const mensualidades = await Mensualidades.findAll({ where: { reclutaId: recluta.id } });
+  for (const m of mensualidades) {
+    await m.update({ miembroId: nuevoMiembro.id, reclutaId: null });
+  }
+
+  await Votaciones.destroy({ where: { reclutaId: recluta.id } });
+  await Reclutas.destroy({ where: { id: recluta.id } });
+
+  console.log(`🎖️  "${recluta.nombre}" movido a miembro (id: ${nuevoMiembro.id})`);
+  return recluta.nombre;
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// 🟩 HELPER: promover recluta a miembro si la mayoría votó Apto
+// Se llama después de cada voto. Si todos han votado y la mayoría
+// es Apto, ejecuta la promoción automáticamente.
+// ─────────────────────────────────────────────────────────────────
+async function promoverSiApto(votacion) {
+  const votos = votacion.votos || {};
+  const valores = Object.values(votos);
+
+  // Esperar a que todos hayan votado
+  const pendientes = valores.filter(v => v === 'Pendiente').length;
+  if (pendientes > 0) return null;
+
+  const aptos   = valores.filter(v => v === 'Apto').length;
+  const noAptos = valores.filter(v => v === 'No apto').length;
+
+  // Mayoría simple: más Aptos que No aptos
+  if (aptos <= noAptos) return null;
+
+  // Delegar en la función compartida (misma lógica que el botón manual)
+  return await ejecutarMoverAMiembro(votacion.reclutaId);
+}
+
+
+
 // Entrada:  { "admin@fear.com": "Apto", "carlos@fear.com": "Pendiente" }
 // Salida:   "admin: ✅ Apto | carlos: ⏳ Pendiente"
 // ─────────────────────────────────────────────────────────────────
@@ -433,22 +481,8 @@ const adminJs = new AdminJS({
               const { record } = context;
               if (!record) throw new Error('No se encontró el recluta.');
 
-              const recluta = record.params;
-
-              const nuevoMiembro = await Miembros.create({
-                nombre: recluta.nombre,
-                fechaInicio: recluta.fechaInicio,
-                plataforma: recluta.plataforma,
-              });
-
-              const mensualidades = await Mensualidades.findAll({ where: { reclutaId: recluta.id } });
-              for (const m of mensualidades) {
-                await m.update({ miembroId: nuevoMiembro.id, reclutaId: null });
-              }
-
-              // Borrar votación del recluta al promoverlo
-              await Votaciones.destroy({ where: { reclutaId: recluta.id } });
-              await Reclutas.destroy({ where: { id: recluta.id } });
+              // Usa la misma función compartida que la promoción automática
+              await ejecutarMoverAMiembro(record.params.id);
 
               return {
                 record: record.toJSON(),
@@ -558,12 +592,24 @@ const adminJs = new AdminJS({
               const nuevosVotos = { ...(votacion.votos || {}), [email]: 'Apto' };
               await votacion.update({ votos: nuevosVotos });
 
-              // Inyectar votosDisplay en la respuesta
+              const nombre = email.split('@')[0];
+
+              // ¿Mayoría alcanzada? → promoción automática
+              const promovido = await promoverSiApto(votacion);
+              if (promovido) {
+                return {
+                  record: record.toJSON(),
+                  notice: {
+                    message: `"${nombre}" votó APTO. ¡"${promovido}" ha sido promovido a miembro automáticamente! 🎖️`,
+                    type: 'success',
+                  },
+                };
+              }
+
               const recordJson = record.toJSON();
               recordJson.params.votos = nuevosVotos;
               recordJson.params.votosDisplay = formatearVotos(nuevosVotos);
 
-              const nombre = email.split('@')[0];
               return {
                 record: recordJson,
                 notice: { message: `"${nombre}" ha votado APTO`, type: 'success' },
@@ -592,11 +638,24 @@ const adminJs = new AdminJS({
               const nuevosVotos = { ...(votacion.votos || {}), [email]: 'No apto' };
               await votacion.update({ votos: nuevosVotos });
 
+              const nombre = email.split('@')[0];
+
+              // Aunque vote No apto, comprobamos igualmente por si ya hay mayoría
+              const promovido = await promoverSiApto(votacion);
+              if (promovido) {
+                return {
+                  record: record.toJSON(),
+                  notice: {
+                    message: `"${nombre}" votó NO APTO. ¡"${promovido}" ha sido promovido a miembro automáticamente! 🎖️`,
+                    type: 'success',
+                  },
+                };
+              }
+
               const recordJson = record.toJSON();
               recordJson.params.votos = nuevosVotos;
               recordJson.params.votosDisplay = formatearVotos(nuevosVotos);
 
-              const nombre = email.split('@')[0];
               return {
                 record: recordJson,
                 notice: { message: `"${nombre}" ha votado NO APTO`, type: 'error' },
