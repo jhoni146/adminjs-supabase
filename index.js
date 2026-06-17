@@ -12,7 +12,7 @@ import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidades from './models/Mensualidades.js';
 import Votaciones from './models/Votaciones.js';
-import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas } from './discord.js';
+import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas, notificarNuevoMiembro } from './discord.js';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
 
@@ -223,6 +223,7 @@ async function ejecutarMoverAMiembro(reclutaId) {
   await Reclutas.destroy({ where: { id: recluta.id } });
 
   console.log(`🎖️  "${recluta.nombre}" movido a miembro (id: ${nuevoMiembro.id})`);
+  await notificarNuevoMiembro(recluta.nombre);
   return recluta.nombre;
 }
 
@@ -332,6 +333,10 @@ const adminJs = new AdminJS({
                 });
                 console.log(`Mensualidad creada para miembro ${record.param('nombre')}`);
               }
+
+              // Notificar a Discord canal de miembros
+              await notificarNuevoMiembro(record.param('nombre'));
+
               return response;
             }
           }
