@@ -12,6 +12,7 @@ import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidades from './models/Mensualidades.js';
 import Votaciones from './models/Votaciones.js';
+import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion } from './discord.js';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
@@ -123,6 +124,7 @@ async function generarVotacionesAutomaticas() {
   }
 
   let generadas = 0;
+  const nombresNuevos = [];  // Para notificación Discord
 
   for (const recluta of reclutas) {
     const fechaInicio = parsearFechaRecluta(recluta.fechaInicio);
@@ -131,11 +133,9 @@ async function generarVotacionesAutomaticas() {
     const diffMeses = (hoy - fechaInicio) / (1000 * 60 * 60 * 24 * 30.44);
     if (diffMeses < 2) continue;
 
-    // ¿Ya existe votación para este recluta?
     const yaExiste = await Votaciones.findOne({ where: { reclutaId: recluta.id } });
     if (yaExiste) continue;
 
-    // Construir objeto de votos: todos los usuarios en "Pendiente"
     const votosIniciales = {};
     for (const u of usuarios) {
       votosIniciales[u.email] = 'Pendiente';
@@ -145,10 +145,11 @@ async function generarVotacionesAutomaticas() {
       reclutaId: recluta.id,
       reclutaNombre: recluta.nombre,
       votos: votosIniciales,
-      fechaLimite: null,  // Sin caducidad — la votación queda abierta indefinidamente
+      fechaLimite: null,
     });
 
     generadas++;
+    nombresNuevos.push(recluta.nombre);
     console.log(`✅ Votación generada para "${recluta.nombre}" — usuarios: ${Object.keys(votosIniciales).join(', ')}`);
   }
 
@@ -156,6 +157,8 @@ async function generarVotacionesAutomaticas() {
     console.log('No hay nuevas votaciones que generar.');
   } else {
     console.log(`Total votaciones creadas: ${generadas}`);
+    // Notificar a Discord con todos los reclutas nuevos de una sola vez
+    await notificarNuevasVotaciones(nombresNuevos);
   }
 }
 
@@ -234,12 +237,18 @@ async function promoverSiApto(votacion) {
 
   const aptos   = valores.filter(v => v === 'Apto').length;
   const noAptos = valores.filter(v => v === 'No apto').length;
+  const nombre  = votacion.reclutaNombre;
 
-  // Mayoría simple: más Aptos que No aptos
-  if (aptos <= noAptos) return null;
-
-  // Delegar en la función compartida (misma lógica que el botón manual)
-  return await ejecutarMoverAMiembro(votacion.reclutaId);
+  if (aptos > noAptos) {
+    // ✅ Mayoría Apto → promover y notificar
+    const promovido = await ejecutarMoverAMiembro(votacion.reclutaId);
+    await notificarResultadoVotacion(nombre, 'apto', votos);
+    return promovido;
+  } else {
+    // ❌ Mayoría No apto → solo notificar, la votación permanece
+    await notificarResultadoVotacion(nombre, 'no_apto', votos);
+    return null;
+  }
 }
 
 
@@ -775,6 +784,7 @@ try {
   console.log('Conectado a Supabase (Postgres)');
   await sequelize.sync({ alter: { drop: false } });
 
+  iniciarBotDiscord();  // 🤖 Conectar bot Discord
   await generarMensualidadesAutomaticas();
   await generarVotacionesAutomaticas();
   iniciarSchedulerVotaciones();
