@@ -195,6 +195,24 @@ function iniciarSchedulerVotaciones() {
 
 
 // ─────────────────────────────────────────────────────────────────
+// 🟩 HELPER: formatear votos para mostrar en AdminJS
+// Entrada:  { "admin@fear.com": "Apto", "carlos@fear.com": "Pendiente" }
+// Salida:   "admin: ✅ Apto | carlos: ⏳ Pendiente"
+// ─────────────────────────────────────────────────────────────────
+function formatearVotos(votos) {
+  if (!votos || typeof votos !== 'object') return '—';
+  const iconos = { 'Apto': '✅', 'No apto': '❌', 'Pendiente': '⏳' };
+  return Object.entries(votos)
+    .map(([email, valor]) => {
+      const nombre = email.split('@')[0];
+      const icono  = iconos[valor] ?? '❓';
+      return `${nombre}: ${icono} ${valor}`;
+    })
+    .join(' | ');
+}
+
+
+// ─────────────────────────────────────────────────────────────────
 // CONFIGURACIÓN ADMINJS
 // ─────────────────────────────────────────────────────────────────
 const adminJs = new AdminJS({
@@ -443,9 +461,6 @@ const adminJs = new AdminJS({
     },
 
     // ── VOTACIONES ────────────────────────────────────────────────
-    // 1 fila por recluta. "votos" (JSONB) guarda emails completos como clave.
-    // "votosDisplay" (virtual) muestra solo el nombre antes del @ en la UI.
-    // ─────────────────────────────────────────────────────────────
     {
       resource: Votaciones,
       options: {
@@ -453,7 +468,6 @@ const adminJs = new AdminJS({
 
         sort: { sortBy: 'fechaLimite', direction: 'asc' },
 
-        // Usamos votosDisplay (virtual) para lista y detalle
         listProperties:   ['reclutaNombre', 'votosDisplay', 'fechaLimite', 'id'],
         showProperties:   ['reclutaNombre', 'votosDisplay', 'fechaLimite', 'createdAt'],
         editProperties:   [],
@@ -465,16 +479,14 @@ const adminJs = new AdminJS({
             label: 'Recluta',
           },
 
-          // Virtual: { "admin": "Apto", "otro": "Pendiente" }
+          // Campo sintético inyectado en los hooks after — NO es campo de BD ni virtual Sequelize
           votosDisplay: {
             label: 'Votos',
-            type: 'mixed',
+            type: 'string',
             isVisible: { list: true, edit: false, show: true, filter: false },
           },
 
-          // Campo real — oculto en UI, usado solo en los handlers
           votos: {
-            label: 'Votos (raw)',
             isVisible: { list: false, edit: false, show: false, filter: false },
           },
 
@@ -495,6 +507,36 @@ const adminJs = new AdminJS({
           edit:   { isAccessible: false, isVisible: false },
           delete: { isAccessible: false, isVisible: false },
 
+          // ── HELPER: construir texto de votos desde el objeto JSONB ──
+          // Transforma { "admin@x.com": "Apto", "otro@x.com": "Pendiente" }
+          // en "admin: ✅ Apto | otro: ⏳ Pendiente"
+          // e inyecta el valor en record.params para que AdminJS lo muestre
+
+          // ── LIST: inyectar votosDisplay en cada record ──────────
+          list: {
+            after: async (response) => {
+              if (response.records) {
+                response.records = response.records.map((record) => {
+                  const votos = record.params?.votos || {};
+                  record.params.votosDisplay = formatearVotos(votos);
+                  return record;
+                });
+              }
+              return response;
+            },
+          },
+
+          // ── SHOW: inyectar votosDisplay en el record ─────────────
+          show: {
+            after: async (response) => {
+              if (response.record) {
+                const votos = response.record.params?.votos || {};
+                response.record.params.votosDisplay = formatearVotos(votos);
+              }
+              return response;
+            },
+          },
+
           // ── VOTAR APTO ──────────────────────────────────────────
           votarApto: {
             actionType: 'record',
@@ -512,16 +554,18 @@ const adminJs = new AdminJS({
               const email = currentAdmin?.email;
               if (!email) throw new Error('No se pudo identificar al usuario.');
 
-              // Recargar desde BD para tener el JSONB actualizado
               const votacion = await Votaciones.findByPk(record.params.id);
-              const votosActuales = votacion.votos || {};
-              const nuevosVotos = { ...votosActuales, [email]: 'Apto' };
-
+              const nuevosVotos = { ...(votacion.votos || {}), [email]: 'Apto' };
               await votacion.update({ votos: nuevosVotos });
+
+              // Inyectar votosDisplay en la respuesta
+              const recordJson = record.toJSON();
+              recordJson.params.votos = nuevosVotos;
+              recordJson.params.votosDisplay = formatearVotos(nuevosVotos);
 
               const nombre = email.split('@')[0];
               return {
-                record: record.toJSON(),
+                record: recordJson,
                 notice: { message: `"${nombre}" ha votado APTO`, type: 'success' },
               };
             },
@@ -545,14 +589,16 @@ const adminJs = new AdminJS({
               if (!email) throw new Error('No se pudo identificar al usuario.');
 
               const votacion = await Votaciones.findByPk(record.params.id);
-              const votosActuales = votacion.votos || {};
-              const nuevosVotos = { ...votosActuales, [email]: 'No apto' };
-
+              const nuevosVotos = { ...(votacion.votos || {}), [email]: 'No apto' };
               await votacion.update({ votos: nuevosVotos });
+
+              const recordJson = record.toJSON();
+              recordJson.params.votos = nuevosVotos;
+              recordJson.params.votosDisplay = formatearVotos(nuevosVotos);
 
               const nombre = email.split('@')[0];
               return {
-                record: record.toJSON(),
+                record: recordJson,
                 notice: { message: `"${nombre}" ha votado NO APTO`, type: 'error' },
               };
             },
