@@ -1,31 +1,30 @@
 import { REST, Routes } from 'discord.js';
 
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const DISCORD_CANAL = process.env.DISCORD_CANAL_ID;
-const DISCORD_ROL   = process.env.DISCORD_ROL_ID;
-const APP_URL       = (process.env.APP_URL || 'https://reclutas.clanfear.es').replace(/\/$/, '');
+const DISCORD_TOKEN        = process.env.DISCORD_TOKEN;
+const DISCORD_CANAL        = process.env.DISCORD_CANAL_ID;
+const DISCORD_ROL          = process.env.DISCORD_ROL_ID;
+const DISCORD_CANAL_MIEMBROS = process.env.DISCORD_CANAL_MIEMBROS_ID;
+const APP_URL              = (process.env.APP_URL || 'https://reclutas.clanfear.es').replace(/\/$/, '');
 
 function mencionRol() {
   return DISCORD_ROL ? `<@&${DISCORD_ROL}>` : '';
 }
 
-async function enviarMensaje(content) {
-  // 🔍 LOG: mostrar estado de las variables al intentar enviar
+async function enviarMensaje(content, canal = DISCORD_CANAL) {
   console.log('[Discord] Intentando enviar mensaje...');
-  console.log(`[Discord] TOKEN definido: ${!!DISCORD_TOKEN} | CANAL: ${DISCORD_CANAL ?? 'NO DEFINIDO'} | ROL: ${DISCORD_ROL ?? 'no definido'}`);
+  console.log(`[Discord] TOKEN definido: ${!!DISCORD_TOKEN} | CANAL: ${canal ?? 'NO DEFINIDO'} | ROL: ${DISCORD_ROL ?? 'no definido'}`);
 
-  if (!DISCORD_TOKEN || !DISCORD_CANAL) {
-    console.warn('⚠️  [Discord] DISCORD_TOKEN o DISCORD_CANAL_ID no configurados — notificación omitida.');
+  if (!DISCORD_TOKEN || !canal) {
+    console.warn('⚠️  [Discord] DISCORD_TOKEN o canal no configurados — notificación omitida.');
     return;
   }
 
   try {
     const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
-    console.log(`[Discord] Enviando al canal ${DISCORD_CANAL}...`);
-    await rest.post(Routes.channelMessages(DISCORD_CANAL), { body: { content } });
+    console.log(`[Discord] Enviando al canal ${canal}...`);
+    await rest.post(Routes.channelMessages(canal), { body: { content } });
     console.log('✅ [Discord] Mensaje enviado correctamente.');
   } catch (err) {
-    // Log completo del error para ver el código y mensaje de Discord
     console.error('❌ [Discord] Error al enviar mensaje:');
     console.error(`   Código: ${err.code ?? 'sin código'}`);
     console.error(`   Status: ${err.status ?? 'sin status'}`);
@@ -91,6 +90,37 @@ export async function notificarResultadoVotacion(nombreRecluta, resultado, votos
       `📊 Resultado (${aptos} Apto / ${noAptos} No apto):\n${resumen}`
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 🟩 Nuevo miembro (canal separado)
+// Soporta múltiples roles: DISCORD_ROLES_MIEMBROS_IDS=id1,id2,id3
+// ─────────────────────────────────────────────────────────────────
+export async function notificarNuevoMiembro(nombre) {
+  console.log(`[Discord] notificarNuevoMiembro: ${nombre}`);
+
+  if (!DISCORD_CANAL_MIEMBROS) {
+    console.warn('⚠️  [Discord] DISCORD_CANAL_MIEMBROS_ID no configurado — notificación de miembro omitida.');
+    return;
+  }
+
+  // Leer roles separados por coma: "id1,id2,id3"
+  const rolesRaw = process.env.DISCORD_ROLES_MIEMBROS_IDS || '';
+  const menciones = rolesRaw
+    .split(',')
+    .map(id => id.trim())
+    .filter(Boolean)
+    .map(id => `<@&${id}>`)
+    .join(' ');
+
+  await enviarMensaje(
+    `${menciones ? menciones + '\n' : ''}` +
+    `🎖️ **¡Nuevo miembro en el Clan F.E.A.R!** 🎖️\n\n` +
+    `**${nombre}** ha completado satisfactoriamente su periodo de reclutamiento y se une oficialmente a las filas del **Clan F.E.A.R**.\n\n` +
+    `¡Bienvenido, soldado! El clan confía en ti y esperamos grandes cosas de ti. 🫡\n\n` +
+    `📋 **Próximo paso:** Pasa por el canal <#1394286054181179412> y postúlate a una escuadra para integrarte con el resto del equipo.`,
+    DISCORD_CANAL_MIEMBROS
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────
