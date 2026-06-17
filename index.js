@@ -11,42 +11,35 @@ import { fileURLToPath } from 'url';
 import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidades from './models/Mensualidades.js';
-import Votaciones from './models/Votaciones.js';  // 🟩 NUEVO
+import Votaciones from './models/Votaciones.js';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
 Reclutas.hasMany(Mensualidades, { foreignKey: 'reclutaId' });
 Mensualidades.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 
-// 🟩 RELACIONES VOTACIONES
-Reclutas.hasMany(Votaciones, { foreignKey: 'reclutaId' });
+Reclutas.hasOne(Votaciones, { foreignKey: 'reclutaId' });
 Votaciones.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
-Miembros.hasMany(Votaciones, { foreignKey: 'miembroId' });
-Votaciones.belongsTo(Miembros, { foreignKey: 'miembroId' });
-
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
-const Components = {};
 
-const emptyComponent = componentLoader.add(
+componentLoader.add(
   'Empty',
   path.join(__dirname, 'adminjs/components/empty.js')
 );
 
-
 const app = express();
 
-// Registrar adapter
 AdminJS.registerAdapter({
   Resource: AdminJSSequelize.Resource,
   Database: AdminJSSequelize.Database,
 });
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 FUNCIÓN: parsear fechaInicio del recluta → objeto Date
-// Soporta formatos: "15-ene-2024", "15/01/2024", "2024-01-15"
+// 🟩 PARSEAR FECHA RECLUTA
+// Soporta: "15-ene-2024" | "15/01/2024" | "2024-01-15"
 // ─────────────────────────────────────────────────────────────────
 function parsearFechaRecluta(fechaStr) {
   if (!fechaStr) return null;
@@ -56,24 +49,19 @@ function parsearFechaRecluta(fechaStr) {
     jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11,
   };
 
-  // Formato "15-ene-2024"
   const matchAbrev = fechaStr.match(/^(\d{1,2})-([a-z]{3})-(\d{4})$/i);
   if (matchAbrev) {
     const [, dia, mes, anio] = matchAbrev;
     const mesIdx = mesesAbrev[mes.toLowerCase()];
-    if (mesIdx !== undefined) {
-      return new Date(parseInt(anio), mesIdx, parseInt(dia));
-    }
+    if (mesIdx !== undefined) return new Date(parseInt(anio), mesIdx, parseInt(dia));
   }
 
-  // Formato "15/01/2024"
   const matchSlash = fechaStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (matchSlash) {
     const [, dia, mes, anio] = matchSlash;
     return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
   }
 
-  // Formato ISO "2024-01-15"
   const d = new Date(fechaStr);
   if (!isNaN(d)) return d;
 
@@ -82,7 +70,7 @@ function parsearFechaRecluta(fechaStr) {
 
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 FUNCIÓN AUTOMÁTICA: GENERAR MENSUALIDADES
+// 🟩 GENERAR MENSUALIDADES AUTOMÁTICAS
 // ─────────────────────────────────────────────────────────────────
 async function generarMensualidadesAutomaticas() {
   const fecha = new Date();
@@ -90,60 +78,49 @@ async function generarMensualidadesAutomaticas() {
     'enero','febrero','marzo','abril','mayo','junio',
     'julio','agosto','septiembre','octubre','noviembre','diciembre'
   ];
-
   const mesActual = meses[fecha.getMonth()];
 
   const existentes = await Mensualidades.findOne({ where: { mes: mesActual } });
-
   if (existentes) {
     console.log(`Mensualidades de ${mesActual} ya existen. No se generan.`);
     return;
   }
 
   const miembros = await Miembros.findAll();
-
   for (const m of miembros) {
     await Mensualidades.create({
-      miembroId: m.id,
-      reclutaId: null,
-      nombre: m.nombre,
-      mes: mesActual,
-      cuota: 3.50,
-      pagado: false,
-      nota: '',
+      miembroId: m.id, reclutaId: null,
+      nombre: m.nombre, mes: mesActual,
+      cuota: 3.50, pagado: false, nota: '',
     });
   }
 
   const reclutas = await Reclutas.findAll();
-
   for (const r of reclutas) {
     await Mensualidades.create({
-      miembroId: null,
-      reclutaId: r.id,
-      nombre: r.nombre,
-      mes: mesActual,
-      cuota: 3.50,
-      pagado: false,
-      nota: '',
+      miembroId: null, reclutaId: r.id,
+      nombre: r.nombre, mes: mesActual,
+      cuota: 3.50, pagado: false, nota: '',
     });
   }
 
-  console.log(
-    `Mensualidades de ${mesActual} generadas automáticamente para ${miembros.length} miembros y ${reclutas.length} reclutas.`
-  );
+  console.log(`Mensualidades de ${mesActual} generadas para ${miembros.length} miembros y ${reclutas.length} reclutas.`);
 }
 
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 FUNCIÓN AUTOMÁTICA: GENERAR VOTACIONES (≥2 meses)
+// 🟩 GENERAR VOTACIONES AUTOMÁTICAS (≥2 meses)
+// 1 fila por recluta. votos = { "email@x.com": "Pendiente", ... }
 // ─────────────────────────────────────────────────────────────────
 async function generarVotacionesAutomaticas() {
   const hoy = new Date();
-
-  // Traer todos los reclutas
   const reclutas = await Reclutas.findAll();
-  // Traer todos los miembros (uno por recluta elegible)
-  const miembros = await Miembros.findAll();
+  const usuarios = await Usuarios.findAll();
+
+  if (usuarios.length === 0) {
+    console.log('Sin usuarios registrados, no se pueden generar votaciones.');
+    return;
+  }
 
   let generadas = 0;
 
@@ -151,73 +128,58 @@ async function generarVotacionesAutomaticas() {
     const fechaInicio = parsearFechaRecluta(recluta.fechaInicio);
     if (!fechaInicio) continue;
 
-    // Calcular diferencia en meses
-    const diffMs = hoy - fechaInicio;
-    const diffMeses = diffMs / (1000 * 60 * 60 * 24 * 30.44); // aprox
+    const diffMeses = (hoy - fechaInicio) / (1000 * 60 * 60 * 24 * 30.44);
+    if (diffMeses < 2) continue;
 
-    if (diffMeses < 2) continue; // Aún no cumple 2 meses
+    // ¿Ya existe votación para este recluta?
+    const yaExiste = await Votaciones.findOne({ where: { reclutaId: recluta.id } });
+    if (yaExiste) continue;
 
-    // ¿Ya existe alguna votación para este recluta?
-    const yaExiste = await Votaciones.findOne({
-      where: { reclutaId: recluta.id },
-    });
+    // Construir objeto de votos: todos los usuarios en "Pendiente"
+    const votosIniciales = {};
+    for (const u of usuarios) {
+      votosIniciales[u.email] = 'Pendiente';
+    }
 
-    if (yaExiste) continue; // Votación ya generada anteriormente
-
-    // Fecha límite: 7 días desde hoy para votar
     const fechaLimite = new Date(hoy);
     fechaLimite.setDate(fechaLimite.getDate() + 7);
 
-    // Crear una fila de votación por cada miembro
-    for (const miembro of miembros) {
-      await Votaciones.create({
-        reclutaId: recluta.id,
-        reclutaNombre: recluta.nombre,
-        miembroId: miembro.id,
-        votante: miembro.nombre,
-        voto: 'Pendiente',
-        fechaLimite: fechaLimite.toISOString().split('T')[0],
-        nota: '',
-      });
-      generadas++;
-    }
+    await Votaciones.create({
+      reclutaId: recluta.id,
+      reclutaNombre: recluta.nombre,
+      votos: votosIniciales,
+      fechaLimite: fechaLimite.toISOString().split('T')[0],
+    });
 
-    console.log(
-      `✅ Votación generada para recluta "${recluta.nombre}" (${miembros.length} votos pendientes, fecha límite: ${fechaLimite.toISOString().split('T')[0]})`
-    );
+    generadas++;
+    console.log(`✅ Votación generada para "${recluta.nombre}" — usuarios: ${Object.keys(votosIniciales).join(', ')}`);
   }
 
   if (generadas === 0) {
     console.log('No hay nuevas votaciones que generar.');
   } else {
-    console.log(`Total filas de votación creadas: ${generadas}`);
+    console.log(`Total votaciones creadas: ${generadas}`);
   }
 }
 
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 SCHEDULER DIARIO DE VOTACIONES
-// Calcula los ms que faltan hasta la próxima medianoche y lanza
-// generarVotacionesAutomaticas() en ese momento, luego cada 24 h.
+// 🟩 SCHEDULER DIARIO — comprueba a medianoche cada día
 // ─────────────────────────────────────────────────────────────────
 function iniciarSchedulerVotaciones() {
   function msHastaMedianoche() {
     const ahora = new Date();
     const maniana = new Date(
-      ahora.getFullYear(),
-      ahora.getMonth(),
-      ahora.getDate() + 1,   // siguiente día
-      0, 0, 5                // 00:00:05 — 5 s de margen
+      ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1,
+      0, 0, 5
     );
     return maniana - ahora;
   }
 
-  // Primer disparo exactamente en la próxima medianoche
   setTimeout(async () => {
     console.log('⏰ [Scheduler] Comprobación diaria de votaciones...');
     await generarVotacionesAutomaticas();
 
-    // A partir de ahí, cada 24 h exactas
     setInterval(async () => {
       console.log('⏰ [Scheduler] Comprobación diaria de votaciones...');
       await generarVotacionesAutomaticas();
@@ -225,10 +187,10 @@ function iniciarSchedulerVotaciones() {
 
   }, msHastaMedianoche());
 
-  const msRestantes = msHastaMedianoche();
-  const horas = Math.floor(msRestantes / 3600000);
-  const minutos = Math.floor((msRestantes % 3600000) / 60000);
-  console.log(`⏰ [Scheduler] Próxima comprobación de votaciones en ${horas}h ${minutos}m (medianoche).`);
+  const ms = msHastaMedianoche();
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  console.log(`⏰ [Scheduler] Próxima comprobación en ${h}h ${m}m (medianoche).`);
 }
 
 
@@ -239,80 +201,57 @@ const adminJs = new AdminJS({
   componentLoader,
 
   resources: [
-    // 🟩 USUARIOS
+
+    // ── USUARIOS ──────────────────────────────────────────────────
     {
       resource: Usuarios,
       options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'Menu',
-        },
+        navigation: { name: 'MENU', icon: 'Menu' },
         properties: {
           password: { type: 'password' },
         },
       },
     },
 
-    // 🟩 MIEMBROS
+    // ── MIEMBROS ──────────────────────────────────────────────────
     {
       resource: Miembros,
       options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'User',
-        },
-
+        navigation: { name: 'MENU', icon: 'User' },
         listProperties: ['nombre', 'fechaInicio', 'plataforma', 'id'],
-
         properties: {
-          nombre: {
-            isTitle: true,
-          },
+          nombre: { isTitle: true },
           plataforma: {
             type: 'string',
             availableValues: [
               { value: 'PLAYSTATION', label: 'PLAYSTATION' },
-              { value: 'XBOX', label: 'XBOX' },
-              { value: 'PC', label: 'PC' },
+              { value: 'XBOX',        label: 'XBOX' },
+              { value: 'PC',          label: 'PC' },
             ],
           },
         },
-
         actions: {
           new: {
             after: async (response, request, context) => {
               const { record } = context;
-
               if (!record) return response;
 
-              const fecha = new Date();
-              const meses = [
-                'enero','febrero','marzo','abril','mayo','junio',
-                'julio','agosto','septiembre','octubre','noviembre','diciembre'
-              ];
-              const mesActual = meses[fecha.getMonth()];
+              const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+              const mesActual = meses[new Date().getMonth()];
 
               const existente = await Mensualidades.findOne({
-                where: {
-                  miembroId: record.id(),
-                  mes: mesActual
-                }
+                where: { miembroId: record.id(), mes: mesActual }
               });
 
               if (!existente) {
                 await Mensualidades.create({
-                  miembroId: record.id(),
-                  reclutaId: null,
-                  nombre: record.param('nombre'),
-                  mes: mesActual,
-                  cuota: 3.50,
-                  pagado: false,
-                  nota: ''
+                  miembroId: record.id(), reclutaId: null,
+                  nombre: record.param('nombre'), mes: mesActual,
+                  cuota: 3.50, pagado: false, nota: ''
                 });
-
-                console.log(`Mensualidad creada automáticamente para miembro ${record.param('nombre')}`);
+                console.log(`Mensualidad creada para miembro ${record.param('nombre')}`);
               }
-
               return response;
             }
           }
@@ -320,75 +259,53 @@ const adminJs = new AdminJS({
       }
     },
 
-
-    // 🟩 MENSUALIDADES
+    // ── MENSUALIDADES ─────────────────────────────────────────────
     {
       resource: Mensualidades,
       options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'Money',
-        },
-
-        sort: {
-          sortBy: 'mes',
-          direction: 'desc'
-        },
-
-        listProperties: [
-          'nombre',
-          'mes',
-          'cuota',
-          'pagado',
-          'nota',
-          'id',
-        ],
-
+        navigation: { name: 'MENU', icon: 'Money' },
+        sort: { sortBy: 'mes', direction: 'desc' },
+        listProperties: ['nombre', 'mes', 'cuota', 'pagado', 'nota', 'id'],
         properties: {
           miembroId: {
             reference: 'Miembros',
             isVisible: { list: true, edit: true, show: true, filter: true },
             populate: true,
           },
-
           reclutaId: {
             reference: 'Reclutas',
             isVisible: { list: true, edit: true, show: true, filter: true },
             populate: true,
           },
-
           nombre: {
             isTitle: true,
             isVisible: { list: true, edit: false, show: true, filter: true },
           },
-
           mes: {
             type: 'string',
             availableValues: [
-              { value: 'enero', label: 'Enero' },
-              { value: 'febrero', label: 'Febrero' },
-              { value: 'marzo', label: 'Marzo' },
-              { value: 'abril', label: 'Abril' },
-              { value: 'mayo', label: 'Mayo' },
-              { value: 'junio', label: 'Junio' },
-              { value: 'julio', label: 'Julio' },
-              { value: 'agosto', label: 'Agosto' },
+              { value: 'enero',      label: 'Enero' },
+              { value: 'febrero',    label: 'Febrero' },
+              { value: 'marzo',      label: 'Marzo' },
+              { value: 'abril',      label: 'Abril' },
+              { value: 'mayo',       label: 'Mayo' },
+              { value: 'junio',      label: 'Junio' },
+              { value: 'julio',      label: 'Julio' },
+              { value: 'agosto',     label: 'Agosto' },
               { value: 'septiembre', label: 'Septiembre' },
-              { value: 'octubre', label: 'Octubre' },
-              { value: 'noviembre', label: 'Noviembre' },
-              { value: 'diciembre', label: 'Diciembre' },
+              { value: 'octubre',    label: 'Octubre' },
+              { value: 'noviembre',  label: 'Noviembre' },
+              { value: 'diciembre',  label: 'Diciembre' },
             ],
           },
-
           pagado: {
             type: 'boolean',
             availableValues: [
-              { value: true, label: 'Pagado' },
+              { value: true,  label: 'Pagado' },
               { value: false, label: 'No pagado' },
             ],
           },
         },
-
         actions: {
           marcarPagado: {
             actionType: 'bulk',
@@ -396,20 +313,12 @@ const adminJs = new AdminJS({
             label: 'Marcar como pagado',
             guard: '¿Marcar estas mensualidades como pagadas?',
             component: false,
-
             handler: async (request, response, context) => {
               const { records } = context;
-
-              for (const record of records) {
-                await record.update({ pagado: true });
-              }
-
+              for (const record of records) await record.update({ pagado: true });
               return {
                 redirectUrl: `${context.h.resourceUrl()}?refresh=${Date.now()}`,
-                notice: {
-                  message: `Se marcaron ${records.length} mensualidades como pagadas`,
-                  type: 'success',
-                },
+                notice: { message: `Se marcaron ${records.length} mensualidades como pagadas`, type: 'success' },
               };
             }
           }
@@ -417,101 +326,66 @@ const adminJs = new AdminJS({
       }
     },
 
-    // 🟩 RECLUTAS
+    // ── RECLUTAS ──────────────────────────────────────────────────
     {
       resource: Reclutas,
       options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'UserCheck',
-        },
-
+        navigation: { name: 'MENU', icon: 'UserCheck' },
         listProperties: ['nombre', 'fechaInicio', 'evaluacion', 'cursos', 'id'],
-
         properties: {
-          nombre: {
-            isTitle: true,
-          },
+          nombre: { isTitle: true },
           fechaInicio: { type: 'string' },
           cursos: {
             type: 'string',
             isArray: true,
             availableValues: [
-              { value: 'Cibi', label: 'Cibi' },
-              { value: 'Medico', label: 'Médico' },
-              { value: 'Formaciones', label: 'Formaciones' },
-              { value: 'Mout', label: 'MOUT' },
-              { value: 'Cqb', label: 'CQB' },
+              { value: 'Cibi',           label: 'Cibi' },
+              { value: 'Medico',         label: 'Médico' },
+              { value: 'Formaciones',    label: 'Formaciones' },
+              { value: 'Mout',           label: 'MOUT' },
+              { value: 'Cqb',            label: 'CQB' },
               { value: 'Comunicaciones', label: 'Comunicaciones' },
-              { value: 'Orientacion', label: 'Orientación' },
+              { value: 'Orientacion',    label: 'Orientación' },
             ],
           },
           evaluacion: {
             type: 'string',
             availableValues: [
-              { value: 'Apto', label: 'Apto' },
+              { value: 'Apto',    label: 'Apto' },
               { value: 'No apto', label: 'No apto' },
             ],
-            isVisible: {
-              list: true,
-              edit: true,
-              show: true,
-              filter: true,
-            },
+            isVisible: { list: true, edit: true, show: true, filter: true },
           },
         },
-
         actions: {
           new: {
             before: async (request) => {
               if (request.payload?.fechaInicio) {
                 const [day, month, year] = request.payload.fechaInicio.split('/');
-
-                const months = [
-                  'ene','feb','mar','abr','may','jun',
-                  'jul','ago','sep','oct','nov','dic'
-                ];
-
-                const monthName = months[parseInt(month) - 1];
-
-                request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+                request.payload.fechaInicio = `${day}-${months[parseInt(month) - 1]}-${year}`;
               }
               return request;
             },
-
             after: async (response, request, context) => {
               const { record } = context;
-
               if (!record) return response;
 
-              const fecha = new Date();
-              const meses = [
-                'enero','febrero','marzo','abril','mayo','junio',
-                'julio','agosto','septiembre','octubre','noviembre','diciembre'
-              ];
-              const mesActual = meses[fecha.getMonth()];
+              const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+              const mesActual = meses[new Date().getMonth()];
 
               const existente = await Mensualidades.findOne({
-                where: {
-                  reclutaId: record.id(),
-                  mes: mesActual
-                }
+                where: { reclutaId: record.id(), mes: mesActual }
               });
-
               if (!existente) {
                 await Mensualidades.create({
-                  reclutaId: record.id(),
-                  miembroId: null,
-                  nombre: record.param('nombre'),
-                  mes: mesActual,
-                  cuota: 3.50,
-                  pagado: false,
-                  nota: ''
+                  reclutaId: record.id(), miembroId: null,
+                  nombre: record.param('nombre'), mes: mesActual,
+                  cuota: 3.50, pagado: false, nota: ''
                 });
-
-                console.log(`Mensualidad creada automáticamente para recluta ${record.param('nombre')}`);
+                console.log(`Mensualidad creada para recluta ${record.param('nombre')}`);
               }
-
               return response;
             }
           },
@@ -520,28 +394,15 @@ const adminJs = new AdminJS({
             before: async (request) => {
               if (request.payload?.fechaInicio) {
                 const value = request.payload.fechaInicio;
-
-                if (value.includes('-')) {
-                  return request;
-                }
-
+                if (value.includes('-')) return request;
                 const [day, month, year] = value.split('/');
-
-                const months = [
-                  'ene','feb','mar','abr','may','jun',
-                  'jul','ago','sep','oct','nov','dic'
-                ];
-
-                const monthName = months[parseInt(month) - 1];
-
-                request.payload.fechaInicio = `${day}-${monthName}-${year}`;
+                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+                request.payload.fechaInicio = `${day}-${months[parseInt(month) - 1]}-${year}`;
               }
-
               return request;
             },
           },
 
-          // 🟩 MOVER A MIEMBRO
           moverAMiembro: {
             actionType: 'record',
             icon: 'UserPlus',
@@ -550,13 +411,9 @@ const adminJs = new AdminJS({
             component: false,
             isAccessible: true,
             isVisible: true,
-
             handler: async (request, response, context) => {
-              const { record, h, resource } = context;
-
-              if (!record) {
-                throw new Error('No se encontró el recluta.');
-              }
+              const { record } = context;
+              if (!record) throw new Error('No se encontró el recluta.');
 
               const recluta = record.params;
 
@@ -566,28 +423,18 @@ const adminJs = new AdminJS({
                 plataforma: recluta.plataforma,
               });
 
-              const mensualidades = await Mensualidades.findAll({
-                where: { reclutaId: recluta.id }
-              });
-
+              const mensualidades = await Mensualidades.findAll({ where: { reclutaId: recluta.id } });
               for (const m of mensualidades) {
-                await m.update({
-                  miembroId: nuevoMiembro.id,
-                  reclutaId: null
-                });
+                await m.update({ miembroId: nuevoMiembro.id, reclutaId: null });
               }
 
-              // Eliminar también sus votaciones al promoverlo
+              // Borrar votación del recluta al promoverlo
               await Votaciones.destroy({ where: { reclutaId: recluta.id } });
-
               await Reclutas.destroy({ where: { id: recluta.id } });
 
               return {
                 record: record.toJSON(),
-                notice: {
-                  message: 'Recluta movido a miembro correctamente',
-                  type: 'success',
-                },
+                notice: { message: 'Recluta movido a miembro correctamente', type: 'success' },
               };
             }
           }
@@ -595,87 +442,40 @@ const adminJs = new AdminJS({
       },
     },
 
-    // ─────────────────────────────────────────────────────────────
-    // 🟩 VOTACIONES
+    // ── VOTACIONES ────────────────────────────────────────────────
+    // 1 fila por recluta. "votos" (JSONB) guarda emails completos como clave.
+    // "votosDisplay" (virtual) muestra solo el nombre antes del @ en la UI.
     // ─────────────────────────────────────────────────────────────
     {
       resource: Votaciones,
       options: {
-        navigation: {
-          name: 'MENU',
-          icon: 'Ballot',
-        },
+        navigation: { name: 'MENU', icon: 'Ballot' },
 
-        sort: {
-          sortBy: 'fechaLimite',
-          direction: 'asc',
-        },
+        sort: { sortBy: 'fechaLimite', direction: 'asc' },
 
-        listProperties: [
-          'reclutaNombre',
-          'votante',
-          'voto',
-          'fechaLimite',
-          'nota',
-          'id',
-        ],
-
-        filterProperties: [
-          'reclutaNombre',
-          'votante',
-          'voto',
-          'fechaLimite',
-        ],
-
-        showProperties: [
-          'reclutaNombre',
-          'reclutaId',
-          'votante',
-          'miembroId',
-          'voto',
-          'fechaLimite',
-          'nota',
-          'createdAt',
-        ],
-
-        editProperties: [
-          'voto',
-          'nota',
-        ],
+        // Usamos votosDisplay (virtual) para lista y detalle
+        listProperties:   ['reclutaNombre', 'votosDisplay', 'fechaLimite', 'id'],
+        showProperties:   ['reclutaNombre', 'votosDisplay', 'fechaLimite', 'createdAt'],
+        editProperties:   [],
+        filterProperties: ['reclutaNombre', 'fechaLimite'],
 
         properties: {
           reclutaNombre: {
             isTitle: true,
             label: 'Recluta',
-            isVisible: { list: true, edit: false, show: true, filter: true },
           },
 
-          reclutaId: {
-            reference: 'Reclutas',
-            label: 'Recluta (ID)',
-            isVisible: { list: false, edit: false, show: true, filter: false },
+          // Virtual: { "admin": "Apto", "otro": "Pendiente" }
+          votosDisplay: {
+            label: 'Votos',
+            type: 'mixed',
+            isVisible: { list: true, edit: false, show: true, filter: false },
           },
 
-          votante: {
-            label: 'Votante',
-            isVisible: { list: true, edit: false, show: true, filter: true },
-          },
-
-          miembroId: {
-            reference: 'Miembros',
-            label: 'Miembro (ID)',
-            isVisible: { list: false, edit: false, show: true, filter: false },
-          },
-
-          voto: {
-            label: 'Voto',
-            type: 'string',
-            availableValues: [
-              { value: 'Apto', label: '✅ Apto' },
-              { value: 'No apto', label: '❌ No apto' },
-              { value: 'Pendiente', label: '⏳ Pendiente' },
-            ],
-            isVisible: { list: true, edit: true, show: true, filter: true },
+          // Campo real — oculto en UI, usado solo en los handlers
+          votos: {
+            label: 'Votos (raw)',
+            isVisible: { list: false, edit: false, show: false, filter: false },
           },
 
           fechaLimite: {
@@ -684,77 +484,83 @@ const adminJs = new AdminJS({
             isVisible: { list: true, edit: false, show: true, filter: true },
           },
 
-          nota: {
-            label: 'Nota',
-            type: 'textarea',
-            isVisible: { list: false, edit: true, show: true, filter: false },
-          },
-
           createdAt: {
-            label: 'Creado el',
+            label: 'Generada el',
             isVisible: { list: false, edit: false, show: true, filter: false },
           },
         },
 
         actions: {
-          // Acción bulk: marcar todos como Apto
-          marcarApto: {
-            actionType: 'bulk',
+          new:    { isAccessible: false, isVisible: false },
+          edit:   { isAccessible: false, isVisible: false },
+          delete: { isAccessible: false, isVisible: false },
+
+          // ── VOTAR APTO ──────────────────────────────────────────
+          votarApto: {
+            actionType: 'record',
             icon: 'ThumbsUp',
-            label: 'Marcar como Apto',
-            guard: '¿Marcar los votos seleccionados como Apto?',
+            label: '✅ Votar Apto',
+            guard: '¿Registrar tu voto como APTO?',
             component: false,
+            isVisible: true,
+            isAccessible: true,
 
             handler: async (request, response, context) => {
-              const { records } = context;
+              const { record, currentAdmin } = context;
+              if (!record) throw new Error('Votación no encontrada.');
 
-              for (const record of records) {
-                await record.update({ voto: 'Apto' });
-              }
+              const email = currentAdmin?.email;
+              if (!email) throw new Error('No se pudo identificar al usuario.');
 
+              // Recargar desde BD para tener el JSONB actualizado
+              const votacion = await Votaciones.findByPk(record.params.id);
+              const votosActuales = votacion.votos || {};
+              const nuevosVotos = { ...votosActuales, [email]: 'Apto' };
+
+              await votacion.update({ votos: nuevosVotos });
+
+              const nombre = email.split('@')[0];
               return {
-                redirectUrl: `${context.h.resourceUrl()}?refresh=${Date.now()}`,
-                notice: {
-                  message: `${records.length} voto(s) marcados como Apto`,
-                  type: 'success',
-                },
+                record: record.toJSON(),
+                notice: { message: `"${nombre}" ha votado APTO`, type: 'success' },
               };
             },
           },
 
-          // Acción bulk: marcar todos como No apto
-          marcarNoApto: {
-            actionType: 'bulk',
+          // ── VOTAR NO APTO ────────────────────────────────────────
+          votarNoApto: {
+            actionType: 'record',
             icon: 'ThumbsDown',
-            label: 'Marcar como No apto',
-            guard: '¿Marcar los votos seleccionados como No apto?',
+            label: '❌ Votar No apto',
+            guard: '¿Registrar tu voto como NO APTO?',
             component: false,
+            isVisible: true,
+            isAccessible: true,
 
             handler: async (request, response, context) => {
-              const { records } = context;
+              const { record, currentAdmin } = context;
+              if (!record) throw new Error('Votación no encontrada.');
 
-              for (const record of records) {
-                await record.update({ voto: 'No apto' });
-              }
+              const email = currentAdmin?.email;
+              if (!email) throw new Error('No se pudo identificar al usuario.');
 
+              const votacion = await Votaciones.findByPk(record.params.id);
+              const votosActuales = votacion.votos || {};
+              const nuevosVotos = { ...votosActuales, [email]: 'No apto' };
+
+              await votacion.update({ votos: nuevosVotos });
+
+              const nombre = email.split('@')[0];
               return {
-                redirectUrl: `${context.h.resourceUrl()}?refresh=${Date.now()}`,
-                notice: {
-                  message: `${records.length} voto(s) marcados como No apto`,
-                  type: 'error',
-                },
+                record: record.toJSON(),
+                notice: { message: `"${nombre}" ha votado NO APTO`, type: 'error' },
               };
             },
-          },
-
-          // No permitir crear votaciones manualmente
-          new: {
-            isAccessible: false,
-            isVisible: false,
           },
         },
       },
     },
+
   ],
 
   rootPath: '/admin',
@@ -764,19 +570,18 @@ const adminJs = new AdminJS({
     softwareBrothers: false,
     logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
     favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
-
     theme: {
       colors: {
         primary100: '#1b2a16',
-        primary80: '#2d3f21',
-        primary60: '#3f5a2c',
-        primary40: '#577a3c',
-        primary20: '#7f9f5b',
-        accent: '#c2b280',
-        hoverBg: '#2d3f21',
+        primary80:  '#2d3f21',
+        primary60:  '#3f5a2c',
+        primary40:  '#577a3c',
+        primary20:  '#7f9f5b',
+        accent:     '#c2b280',
+        hoverBg:    '#2d3f21',
       },
       fonts: {
-        base: '"Roboto Condensed", sans-serif',
+        base:     '"Roboto Condensed", sans-serif',
         headings: '"Roboto Condensed", sans-serif',
       },
     },
@@ -785,44 +590,39 @@ const adminJs = new AdminJS({
   locale: {
     language: 'es',
     availableLanguages: ['es', 'en'],
-
     translations: {
       properties: {
-        email: 'Correo electrónico',
-        password: 'Contraseña',
+        email:       'Correo electrónico',
+        password:    'Contraseña',
         fechaInicio: 'Fecha de inicio',
       },
-
       actions: {
-        new: 'Crear',
-        edit: 'Editar',
+        new:    'Crear',
+        edit:   'Editar',
         delete: 'Eliminar',
-        show: 'Ver',
-        list: 'Listado',
+        show:   'Ver',
+        list:   'Listado',
       },
-
       buttons: {
-        save: 'Guardar',
-        addNewItem: 'Añadir',
-        filter: 'Filtrar',
-        applyChanges: 'Aplicar cambios',
-        resetFilter: 'Reiniciar filtros',
-        logout: 'Cerrar sesión',
-        login: 'Iniciar sesión',
+        save:           'Guardar',
+        addNewItem:     'Añadir',
+        filter:         'Filtrar',
+        applyChanges:   'Aplicar cambios',
+        resetFilter:    'Reiniciar filtros',
+        logout:         'Cerrar sesión',
+        login:          'Iniciar sesión',
       },
-
       messages: {
         successfullyCreated: 'Creado correctamente',
         successfullyUpdated: 'Actualizado correctamente',
         successfullyDeleted: 'Eliminado correctamente',
         noRecordsInResource: 'No hay registros en este recurso',
       },
-
       components: {
         DropZone: {
-          placeholder: 'Arrastra tu archivo aquí o haz clic',
-          acceptedSize: 'Tamaño máximo: {{maxSize}}',
-          acceptedType: 'Tipos permitidos: {{mimeTypes}}',
+          placeholder:     'Arrastra tu archivo aquí o haz clic',
+          acceptedSize:    'Tamaño máximo: {{maxSize}}',
+          acceptedType:    'Tipos permitidos: {{mimeTypes}}',
           unsupportedSize: 'El archivo {{fileName}} es demasiado grande',
           unsupportedType: 'El archivo {{fileName}} tiene un tipo no permitido',
         },
@@ -831,7 +631,9 @@ const adminJs = new AdminJS({
   },
 });
 
-// Autenticación
+// ─────────────────────────────────────────────────────────────────
+// AUTENTICACIÓN
+// ─────────────────────────────────────────────────────────────────
 const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
   {
@@ -847,24 +649,17 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
 
 app.use(adminJs.options.rootPath, router);
 
-app.get('/', (req, res) => {
-  res.redirect('/admin');
-});
+app.get('/', (req, res) => res.redirect('/admin'));
 
 const port = process.env.PORT || 3000;
 
 try {
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
-  await sequelize.sync();
+  await sequelize.sync({ alter: true });
 
-  // 🟩 GENERACIÓN AUTOMÁTICA DE MENSUALIDADES
   await generarMensualidadesAutomaticas();
-
-  // 🟩 GENERACIÓN AUTOMÁTICA DE VOTACIONES (≥2 meses) — arranque
   await generarVotacionesAutomaticas();
-
-  // 🟩 SCHEDULER: comprueba cada día a medianoche
   iniciarSchedulerVotaciones();
 
   app.listen(port, () => {
