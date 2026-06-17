@@ -1,80 +1,66 @@
-import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { REST, Routes } from 'discord.js';
 
-// ─────────────────────────────────────────────────────────────────
-// Cliente Discord — se inicializa una vez al arrancar el servidor
-// ─────────────────────────────────────────────────────────────────
-const DISCORD_TOKEN   = process.env.DISCORD_TOKEN;
-const DISCORD_CANAL   = process.env.DISCORD_CANAL_ID;   // ID del canal de texto
-const DISCORD_ROL     = process.env.DISCORD_ROL_ID;     // ID del rol a mencionar
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const DISCORD_CANAL = process.env.DISCORD_CANAL_ID;
+const DISCORD_ROL   = process.env.DISCORD_ROL_ID;
 
-let clienteListo = false;
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+function mencionRol() {
+  return DISCORD_ROL ? `<@&${DISCORD_ROL}>` : '';
+}
 
-client.once(Events.ClientReady, (c) => {
-  clienteListo = true;
-  console.log(`🤖 [Discord] Bot conectado como "${c.user.tag}"`);
-});
+async function enviarMensaje(content) {
+  // 🔍 LOG: mostrar estado de las variables al intentar enviar
+  console.log('[Discord] Intentando enviar mensaje...');
+  console.log(`[Discord] TOKEN definido: ${!!DISCORD_TOKEN} | CANAL: ${DISCORD_CANAL ?? 'NO DEFINIDO'} | ROL: ${DISCORD_ROL ?? 'no definido'}`);
 
-// Función interna: enviar mensaje al canal configurado
-async function enviarMensaje(texto) {
   if (!DISCORD_TOKEN || !DISCORD_CANAL) {
     console.warn('⚠️  [Discord] DISCORD_TOKEN o DISCORD_CANAL_ID no configurados — notificación omitida.');
     return;
   }
 
-  if (!clienteListo) {
-    console.warn('⚠️  [Discord] Bot aún no listo — notificación omitida.');
-    return;
-  }
-
   try {
-    const canal = await client.channels.fetch(DISCORD_CANAL);
-    if (!canal || !canal.isTextBased()) {
-      console.warn('⚠️  [Discord] Canal no encontrado o no es de texto.');
-      return;
-    }
-    await canal.send(texto);
+    const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
+    console.log(`[Discord] Enviando al canal ${DISCORD_CANAL}...`);
+    await rest.post(Routes.channelMessages(DISCORD_CANAL), { body: { content } });
+    console.log('✅ [Discord] Mensaje enviado correctamente.');
   } catch (err) {
-    console.error('❌ [Discord] Error al enviar mensaje:', err.message);
+    // Log completo del error para ver el código y mensaje de Discord
+    console.error('❌ [Discord] Error al enviar mensaje:');
+    console.error(`   Código: ${err.code ?? 'sin código'}`);
+    console.error(`   Status: ${err.status ?? 'sin status'}`);
+    console.error(`   Mensaje: ${err.message}`);
+    if (err.rawError) console.error(`   Raw: ${JSON.stringify(err.rawError)}`);
   }
 }
-
-// Mención del rol si está configurado, vacío si no
-function mencionRol() {
-  return DISCORD_ROL ? `<@&${DISCORD_ROL}>` : '';
-}
-
 
 // ─────────────────────────────────────────────────────────────────
-// 🟩 NOTIFICACIÓN: nueva(s) votación(es) generada(s)
-// Llamar con un array de nombres de reclutas
+// 🟩 Nueva(s) votación(es) generada(s)
 // ─────────────────────────────────────────────────────────────────
 export async function notificarNuevasVotaciones(nombresReclutas) {
-  if (!nombresReclutas || nombresReclutas.length === 0) return;
+  if (!nombresReclutas?.length) return;
+
+  console.log(`[Discord] notificarNuevasVotaciones llamada con: ${nombresReclutas.join(', ')}`);
 
   const lista = nombresReclutas.map(n => `• **${n}**`).join('\n');
   const rol   = mencionRol();
 
-  const mensaje =
+  await enviarMensaje(
     `${rol ? rol + '\n' : ''}` +
     `⚔️ **Nueva votación de admisión** ⚔️\n` +
     `Los siguientes reclutas han cumplido 2 meses y están listos para ser evaluados:\n\n` +
     `${lista}\n\n` +
-    `Entrad en el panel de administración y emitid vuestro voto ✅ / ❌`;
-
-  await enviarMensaje(mensaje);
+    `Entrad en el panel de administración y emitid vuestro voto ✅ / ❌`
+  );
 }
 
-
 // ─────────────────────────────────────────────────────────────────
-// 🟩 NOTIFICACIÓN: votación finalizada — resultado
-// resultado: 'apto' | 'no_apto'
-// votos: { "admin@x.com": "Apto", ... }
+// 🟩 Votación finalizada — resultado
 // ─────────────────────────────────────────────────────────────────
 export async function notificarResultadoVotacion(nombreRecluta, resultado, votos) {
+  console.log(`[Discord] notificarResultadoVotacion llamada — recluta: ${nombreRecluta}, resultado: ${resultado}`);
+
   const rol = mencionRol();
 
-  // Construir resumen de votos con nombres (antes del @)
   const resumen = Object.entries(votos || {})
     .map(([email, voto]) => {
       const nombre = email.split('@')[0];
@@ -86,34 +72,33 @@ export async function notificarResultadoVotacion(nombreRecluta, resultado, votos
   const aptos   = Object.values(votos || {}).filter(v => v === 'Apto').length;
   const noAptos = Object.values(votos || {}).filter(v => v === 'No apto').length;
 
-  let mensaje;
   if (resultado === 'apto') {
-    mensaje =
+    await enviarMensaje(
       `${rol ? rol + '\n' : ''}` +
       `🎖️ **Votación finalizada — APTO** 🎖️\n` +
-      `El recluta **${nombreRecluta}** ha sido aprobado por mayoría y promovido a **Miembro**.\n\n` +
-      `📊 Resultado (${aptos} Apto / ${noAptos} No apto):\n${resumen}`;
+      `El recluta **${nombreRecluta}** ha sido aprobado y promovido a **Miembro**.\n\n` +
+      `📊 Resultado (${aptos} Apto / ${noAptos} No apto):\n${resumen}`
+    );
   } else {
-    mensaje =
+    await enviarMensaje(
       `${rol ? rol + '\n' : ''}` +
       `🚫 **Votación finalizada — NO APTO** 🚫\n` +
       `El recluta **${nombreRecluta}** no ha alcanzado la mayoría necesaria.\n\n` +
-      `📊 Resultado (${aptos} Apto / ${noAptos} No apto):\n${resumen}`;
+      `📊 Resultado (${aptos} Apto / ${noAptos} No apto):\n${resumen}`
+    );
   }
-
-  await enviarMensaje(mensaje);
 }
 
-
 // ─────────────────────────────────────────────────────────────────
-// Iniciar el bot — llamar una sola vez al arrancar el servidor
+// iniciarBotDiscord
 // ─────────────────────────────────────────────────────────────────
 export function iniciarBotDiscord() {
+  console.log('[Discord] iniciarBotDiscord llamada.');
+  console.log(`[Discord] TOKEN definido: ${!!DISCORD_TOKEN} | CANAL: ${DISCORD_CANAL ?? 'NO DEFINIDO'} | ROL: ${DISCORD_ROL ?? 'no definido'}`);
+
   if (!DISCORD_TOKEN) {
-    console.warn('⚠️  [Discord] DISCORD_TOKEN no definido — bot desactivado.');
+    console.warn('⚠️  [Discord] DISCORD_TOKEN no definido — notificaciones desactivadas.');
     return;
   }
-  client.login(DISCORD_TOKEN).catch(err => {
-    console.error('❌ [Discord] Error al conectar el bot:', err.message);
-  });
+  console.log('🤖 [Discord] Notificaciones via REST activadas.');
 }
