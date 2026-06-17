@@ -12,7 +12,9 @@ import { ComponentLoader } from 'adminjs';
 import Miembros from './models/Miembros.js';
 import Mensualidades from './models/Mensualidades.js';
 import Votaciones from './models/Votaciones.js';
-import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion } from './discord.js';
+import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas } from './discord.js';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
@@ -32,6 +34,7 @@ componentLoader.add(
 );
 
 const app = express();
+app.set('trust proxy', 1);  // Coolify/Nginx actúa como proxy — necesario para sesiones
 
 AdminJS.registerAdapter({
   Resource: AdminJSSequelize.Resource,
@@ -106,6 +109,7 @@ async function generarMensualidadesAutomaticas() {
   }
 
   console.log(`Mensualidades de ${mesActual} generadas para ${miembros.length} miembros y ${reclutas.length} reclutas.`);
+  await notificarMensualidadesGeneradas(mesActual, miembros.length, reclutas.length);
 }
 
 
@@ -462,6 +466,10 @@ const adminJs = new AdminJS({
                 });
                 console.log(`Mensualidad creada para recluta ${record.param('nombre')}`);
               }
+
+              // Notificar a Discord
+              await notificarNuevoRecluta(record.param('nombre'), record.param('fechaInicio'));
+
               return response;
             }
           },
@@ -761,14 +769,11 @@ const adminJs = new AdminJS({
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN — sesión persistente en PostgreSQL
 // ─────────────────────────────────────────────────────────────────
-import session from 'express-session';
-import connectPgSimple from 'connect-pg-simple';
-
 const PgSession = connectPgSimple(session);
 
 const sessionStore = new PgSession({
   conString: process.env.DATABASE_URL,
-  tableName: 'Sessions',       // se crea automáticamente
+  tableName: 'Sessions',
   createTableIfMissing: true,
 });
 
@@ -783,7 +788,7 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
     },
     cookiePassword: process.env.ADMINJS_COOKIE_SECRET || 'cookie-secret',
   },
-  null,   // router base (null = crea uno nuevo)
+  null,
   {
     store: sessionStore,
     resave: false,
@@ -792,7 +797,7 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,  // 30 días
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,   // Coolify gestiona HTTPS en el proxy — la cookie viaja HTTP internamente
     },
   }
 );

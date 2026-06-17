@@ -94,7 +94,31 @@ export async function notificarResultadoVotacion(nombreRecluta, resultado, votos
 }
 
 // ─────────────────────────────────────────────────────────────────
-// iniciarBotDiscord
+// 🟩 Nuevo recluta creado
+// ─────────────────────────────────────────────────────────────────
+export async function notificarNuevoRecluta(nombre, fechaInicio) {
+  console.log(`[Discord] notificarNuevoRecluta: ${nombre}`);
+  await enviarMensaje(
+    `🪖 **Nuevo recluta incorporado**\n` +
+    `**${nombre}** se ha unido al clan como recluta.\n` +
+    `📅 Fecha de inicio: **${fechaInicio || 'sin fecha'}**\n` +
+    `La votación de admisión se generará automáticamente a los 2 meses.`
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 🟩 Mensualidades generadas
+// ─────────────────────────────────────────────────────────────────
+export async function notificarMensualidadesGeneradas(mes, totalMiembros, totalReclutas) {
+  console.log(`[Discord] notificarMensualidadesGeneradas: ${mes}`);
+  await enviarMensaje(
+    `💰 **Mensualidades de ${mes} generadas**\n` +
+    `Se han creado las cuotas del mes para **${totalMiembros}** miembro(s) y **${totalReclutas}** recluta(s).\n` +
+    `Recordad realizar el pago de 3,50€ 💸`
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────
 export function iniciarBotDiscord() {
   console.log('[Discord] iniciarBotDiscord llamada.');
