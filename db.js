@@ -9,7 +9,7 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 
 // 🟩 sincronización automática segura
-sequelize.sync({ alter: true })
+sequelize.sync({ alter: { drop: false } })
   .then(() => {
     console.log('Base de datos sincronizada automáticamente (alter: true)');
   })
