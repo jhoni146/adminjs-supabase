@@ -759,8 +759,19 @@ const adminJs = new AdminJS({
 });
 
 // ─────────────────────────────────────────────────────────────────
-// AUTENTICACIÓN
+// AUTENTICACIÓN — sesión persistente en PostgreSQL
 // ─────────────────────────────────────────────────────────────────
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
+
+const PgSession = connectPgSimple(session);
+
+const sessionStore = new PgSession({
+  conString: process.env.DATABASE_URL,
+  tableName: 'Sessions',       // se crea automáticamente
+  createTableIfMissing: true,
+});
+
 const router = AdminJSExpress.buildAuthenticatedRouter(
   adminJs,
   {
@@ -771,6 +782,18 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
       return null;
     },
     cookiePassword: process.env.ADMINJS_COOKIE_SECRET || 'cookie-secret',
+  },
+  null,   // router base (null = crea uno nuevo)
+  {
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.ADMINJS_COOKIE_SECRET || 'cookie-secret',
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000,  // 30 días
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    },
   }
 );
 
