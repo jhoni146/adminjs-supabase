@@ -301,14 +301,22 @@ label {
   border-radius: 0 !important;
 }
 
+/* Forzar fondo oscuro en TODOS los hijos de show */
+[data-css$="-show"] > *,
+[data-css$="-show"] > * > *,
+[data-css$="-show"] > * > * > * {
+  background: var(--bg-card) !important;
+}
+
 /* Labels dorado */
 [data-css$="-show"] label,
 [data-css$="-edit"] label,
 [data-css$="-new"] label {
   color: var(--gold) !important;
+  background: transparent !important;
 }
 
-/* Valores — todo lo que hay debajo del label */
+/* Valores — texto blanco sobre card oscura */
 [data-css$="-show"] p,
 [data-css$="-show"] span,
 [data-css$="-show"] div,
@@ -316,10 +324,12 @@ label {
 [data-css$="-show"] li,
 [data-css$="-show"] small,
 [data-css$="-show"] strong,
+[data-css$="-show"] time,
 [data-css$="-show"] h1,
 [data-css$="-show"] h2,
 [data-css$="-show"] h3 {
   color: var(--text) !important;
+  background: transparent !important;
 }
 
 /* Área de contenido fuera de tabla — títulos y breadcrumb */
