@@ -491,3 +491,36 @@ section[data-css$="-new-drawer-content"] button[type="submit"]:hover,
 section[data-css$="-edit-drawer-content"] button[type="submit"]:hover {
   background: var(--red) !important;
 }
+
+/* ══════════════════════════════════════════════════
+   BOTONES DE ACCIÓN EN VISTA SHOW (Editar, Borrar, Votar...)
+   El topbar de la vista show tiene fondo claro
+══════════════════════════════════════════════════ */
+[data-css="actions-filter"],
+[data-css="actions"],
+[data-css*="action"] {
+  color: #1a1a1a !important;
+}
+
+[data-css="actions"] button,
+[data-css="actions-filter"] button,
+[data-css*="action"] button {
+  color: #1a1a1a !important;
+  border: 1px solid #cccccc !important;
+  background: transparent !important;
+}
+
+[data-css="actions"] button:hover,
+[data-css*="action"] button:hover {
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+}
+
+/* Topbar blanco — todos los textos oscuros */
+[data-css="top-bar"] button,
+[data-css="top-bar"] a,
+[data-css="top-bar"] span,
+[data-css="top-bar"] svg {
+  color: #1a1a1a !important;
+  fill: #1a1a1a !important;
+}
