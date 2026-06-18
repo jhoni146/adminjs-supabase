@@ -417,3 +417,36 @@ a:hover { color: var(--text) !important; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+/* ══════════════════════════════════════════════════
+   FIX ESPECÍFICO: text nodes en show view
+   Clases reales del DOM inspeccionado
+══════════════════════════════════════════════════ */
+
+/* Contenedor del drawer show */
+section[data-css$="-show-drawer-content"],
+section[data-css$="-show-drawer-content"] * {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+/* Restaurar labels dorado */
+section[data-css$="-show-drawer-content"] label,
+section[data-css$="-show-drawer-content"] .adminjs_Label {
+  color: var(--gold) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+}
+
+/* Clase exacta de las sections de propiedad */
+section.adminjs_Box {
+  color: var(--text) !important;
+  background: var(--bg-card) !important;
+}
+
+/* Clase exacta del label */
+label.adminjs_Label {
+  color: var(--gold) !important;
+  background: transparent !important;
+}
