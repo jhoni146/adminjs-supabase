@@ -398,11 +398,15 @@ label {
   text-transform: uppercase !important;
 }
 
-/* Valores de campos */
+/* Valores de campos — todo texto dentro del show */
 [data-css$="-show"] p,
 [data-css$="-show"] span,
 [data-css$="-show"] div,
-[data-css$="-show"] a {
+[data-css$="-show"] a,
+[data-css$="-show"] td,
+[data-css$="-show"] li,
+[data-css$="-show"] small,
+[data-css$="-show"] strong {
   color: #1e3010 !important;
 }
 
@@ -410,6 +414,16 @@ label {
 [data-css$="-show"] h1,
 [data-css$="-show"] h2,
 [data-css$="-show"] h3 {
+  color: #1e3010 !important;
+}
+
+/* Mismo para edit y new */
+[data-css$="-edit"] p,
+[data-css$="-edit"] span,
+[data-css$="-edit"] div,
+[data-css$="-new"] p,
+[data-css$="-new"] span,
+[data-css$="-new"] div {
   color: #1e3010 !important;
 }
 
