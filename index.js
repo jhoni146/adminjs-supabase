@@ -35,7 +35,7 @@ const GlobalStyleComponent = componentLoader.add(
 
 const DashboardComponent = componentLoader.add(
   'Dashboard',
-  path.join(__dirname, 'adminjs/components/dashboard.jsx')
+  path.join(__dirname, 'adminjs/components/dashboard.js')
 );
 
 const app = express();

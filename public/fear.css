@@ -524,3 +524,45 @@ section[data-css$="-edit-drawer-content"] button[type="submit"]:hover {
   color: #1a1a1a !important;
   fill: #1a1a1a !important;
 }
+
+/* ══════════════════════════════════════════════════
+   BOTONES DE ACCIÓN EN SHOW — selectores exactos
+══════════════════════════════════════════════════ */
+
+/* Todos los botones de acción en vista show/list */
+a.adminjs_Button,
+button.adminjs_Button {
+  color: #1a1a1a !important;
+  border: 1px solid #999 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-size: 12px !important;
+}
+
+a.adminjs_Button:hover,
+button.adminjs_Button:hover {
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+}
+
+/* Botones primarios (guardar, confirmar) */
+a.adminjs_Button[color="primary"],
+button.adminjs_Button[color="primary"] {
+  background: var(--red-dim) !important;
+  border-color: var(--red) !important;
+  color: white !important;
+}
+
+a.adminjs_Button[color="primary"]:hover,
+button.adminjs_Button[color="primary"]:hover {
+  background: var(--red) !important;
+}
+
+/* Iconos dentro de botones */
+a.adminjs_Button svg,
+button.adminjs_Button svg {
+  stroke: currentColor !important;
+}
