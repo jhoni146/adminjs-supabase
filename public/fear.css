@@ -4,19 +4,19 @@
    VARIABLES
 ══════════════════════════════════════════════════ */
 :root {
-  --bg:           #0b110a;
-  --bg-mid:       #121a0f;
-  --bg-card:      #192113;
-  --bg-input:     #1f2d17;
-  --border:       #2a3d1e;
-  --border-light: #3a5228;
-  --green-hi:     #5a8038;
-  --green-lo:     #3a5228;
+  --bg:           #0e1a0b;
+  --bg-mid:       #162012;
+  --bg-card:      #1c2a16;
+  --bg-input:     #223318;
+  --border:       #354d26;
+  --border-light: #4a6e32;
+  --green-hi:     #72a84a;
+  --green-lo:     #4a6e32;
   --gold:         #c4973a;
   --gold-dim:     #8a6520;
-  --text:         #d4e8c0;
-  --text-dim:     #7a9870;
-  --text-muted:   #4a6040;
+  --text:         #ddeec8;
+  --text-dim:     #9ab880;
+  --text-muted:   #5a7848;
   --danger:       #7a2020;
   --danger-hi:    #c04040;
 }
@@ -152,9 +152,26 @@ h2 { font-size: 18px !important; }
 
 /* Breadcrumb */
 nav[aria-label="breadcrumb"] a,
-[data-css="breadcrumbs"] a {
+nav[aria-label="breadcrumb"] span,
+[data-css="breadcrumbs"] a,
+[data-css="breadcrumbs"] span,
+[data-css="breadcrumbs"],
+nav a, nav span {
   color: var(--text-dim) !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+nav[aria-label="breadcrumb"] a:hover,
+[data-css="breadcrumbs"] a:hover {
+  color: var(--text) !important;
+}
+
+/* Separador / entre breadcrumbs */
+nav[aria-label="breadcrumb"] span[aria-hidden],
+[data-css="breadcrumbs"] span {
+  color: var(--text-muted) !important;
 }
 
 /* ══════════════════════════════════════════════════
