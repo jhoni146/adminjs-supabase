@@ -37,35 +37,41 @@
       </div>
     `;
 
-    // Buscar el contenedor raíz del contenido de AdminJS y reemplazarlo entero
+    // Buscar y reemplazar el contenedor del dashboard de AdminJS
+    // La clase exacta del DOM es adminjs_Box en el primer section de contenido
     const interval = setInterval(() => {
       if (document.getElementById('fear-dashboard')) {
         clearInterval(interval);
         return;
       }
 
-      // AdminJS renderiza el dashboard por defecto dentro de estos contenedores
-      // Buscamos el más específico primero
-      const candidates = [
-        document.querySelector('[data-css="default-dashboard"]'),
-        document.querySelector('section[data-css*="dashboard"]'),
-        document.querySelector('[class*="DefaultDashboard"]'),
-        document.querySelector('[class*="default-dashboard"]'),
-        // Fallback: el contenedor de contenido principal
-        document.querySelector('[data-css="content"]'),
-        document.querySelector('main'),
-      ];
+      // Buscar el contenedor específico del dashboard por defecto de AdminJS
+      // Tiene clase adminjs_Box y contiene links a docs.adminjs.co
+      const allBoxes = document.querySelectorAll('section.adminjs_Box');
+      let defaultDash = null;
 
-      const target = candidates.find(el => el !== null);
-      if (!target) return;
+      for (const box of allBoxes) {
+        // El dashboard por defecto tiene links a adminjs.co
+        if (box.innerHTML.includes('docs.adminjs.co') || box.innerHTML.includes('adminjs.page.link')) {
+          defaultDash = box;
+          break;
+        }
+      }
 
-      // Limpiar TODO el contenido del contenedor y poner el nuestro
-      target.innerHTML = html;
+      if (!defaultDash) return;
+
+      // Reemplazar el contenido del contenedor padre
+      const parent = defaultDash.parentElement;
+      if (parent) {
+        parent.innerHTML = html;
+      } else {
+        defaultDash.outerHTML = html;
+      }
+
       clearInterval(interval);
-    }, 150);
+    }, 200);
   }
 
-  // Arrancar cuando el DOM esté listo
   function init() {
     fetch('/admin-stats')
       .then(r => r.json())
