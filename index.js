@@ -15,7 +15,7 @@ import Votaciones from './models/Votaciones.js';
 import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas, notificarNuevoMiembro } from './discord.js';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
-import { bundleComponents } from '@adminjs/bundler';
+import { bundle } from '@adminjs/bundler';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
@@ -815,7 +815,7 @@ const port = process.env.PORT || 3000;
 
 try {
   // 🟩 Bundlear componentes custom ANTES de arrancar el servidor
-  await bundleComponents({ adminJsInstance: adminJs });
+  await bundle({ componentLoader, destinationDir: 'public' });
   console.log('AdminJS: componentes bundleados correctamente.');
 
   await sequelize.authenticate();
