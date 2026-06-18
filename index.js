@@ -281,15 +281,6 @@ function formatearVotos(votos) {
 const adminJs = new AdminJS({
   componentLoader,
 
-  dashboard: {
-    component: GlobalStyleComponent,
-  },
-
-  overrides: {
-    // Inyecta GlobalStyle en TODAS las páginas del panel
-    Layout: GlobalStyleComponent,
-  },
-
   resources: [
 
     // ── USUARIOS ──────────────────────────────────────────────────
@@ -832,6 +823,59 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
     },
   }
 );
+
+// ─────────────────────────────────────────────────────────────────
+// 🟩 MIDDLEWARE: inyectar CSS militar en todas las páginas AdminJS
+// Intercepta el HTML que devuelve AdminJS y añade fuentes + estilos
+// ─────────────────────────────────────────────────────────────────
+app.use(adminJs.options.rootPath, (req, res, next) => {
+  const originalSend = res.send.bind(res);
+  res.send = (body) => {
+    if (typeof body === 'string' && body.includes('</head>')) {
+      const css = `
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+        <style>
+          *, body, input, button, select, textarea {
+            font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
+            letter-spacing: 0.03em;
+          }
+          h1, h2, h3, h4, h5 {
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+            font-weight: 700 !important;
+          }
+          button, [class*="Button"], a[class*="Button"] {
+            border-radius: 0 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
+            font-weight: 600 !important;
+          }
+          input, select, textarea {
+            border-radius: 0 !important;
+          }
+          td, th {
+            font-size: 15px !important;
+          }
+          th {
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+          }
+          ::-webkit-scrollbar { width: 6px; height: 6px; }
+          ::-webkit-scrollbar-track { background: #0a0f08; }
+          ::-webkit-scrollbar-thumb { background: #2e4520; border-radius: 0; }
+          ::-webkit-scrollbar-thumb:hover { background: #4a6e30; }
+        </style>
+      `;
+      body = body.replace('</head>', css + '</head>');
+    }
+    return originalSend(body);
+  };
+  next();
+});
 
 app.use(adminJs.options.rootPath, router);
 
