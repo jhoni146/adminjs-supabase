@@ -706,23 +706,40 @@ const adminJs = new AdminJS({
   rootPath: '/admin',
 
   branding: {
-    companyName: 'Reclutas - Clan F.E.A.R',
+    companyName: '// CLAN F.E.A.R — OPS PANEL',
     softwareBrothers: false,
     logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
     favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
     theme: {
       colors: {
-        primary100: '#1b2a16',
-        primary80:  '#2d3f21',
-        primary60:  '#3f5a2c',
-        primary40:  '#577a3c',
-        primary20:  '#7f9f5b',
-        accent:     '#c2b280',
-        hoverBg:    '#2d3f21',
+        // Fondos — de más oscuro a más claro
+        primary100: '#0a0f08',   // negro oliva profundo — fondo principal
+        primary80:  '#141f0f',   // fondo de sidebar y cabecera
+        primary60:  '#1e2e14',   // fondo de cards y tablas
+        primary40:  '#2e4520',   // bordes, separadores, hover suave
+        primary20:  '#4a6e30',   // elementos activos, badges
+
+        // Acento — dorado militar desaturado
+        accent:     '#b8952a',
+
+        // Hover
+        hoverBg:    '#1e2e14',
+
+        // Textos
+        filterBg:   '#0a0f08',
+        inputBorder:'#2e4520',
+
+        // Botones de acción
+        love:       '#8b1a1a',   // rojo oscuro para eliminar
+        success:    '#3a5e25',   // verde oscuro para éxito
+        info:       '#1e3d2a',   // verde azulado para info
+        warning:    '#7a5c1e',   // ámbar oscuro para avisos
       },
       fonts: {
-        base:     '"Roboto Condensed", sans-serif',
-        headings: '"Roboto Condensed", sans-serif',
+        // Barlow Condensed: compacta y militar
+        // Share Tech Mono: monoespaciada táctica para detalles
+        base:     '"Barlow Condensed", "Roboto Condensed", sans-serif',
+        headings: '"Barlow Condensed", "Roboto Condensed", sans-serif',
       },
     },
   },
