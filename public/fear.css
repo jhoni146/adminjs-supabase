@@ -635,3 +635,24 @@ section[data-css$="-edit-drawer-content"] div[class*="singleValue"] {
 html body div[class*="singleValue"] {
   color: #ffffff !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX DEFINITIVO SINGLEVALUE — clase exacta del DOM
+══════════════════════════════════════════════════ */
+.css-3ynj00-singleValue {
+  color: #ffffff !important;
+}
+
+/* Por si la clase hash cambia, cubrimos el patrón */
+[class^="css-"][class$="-singleValue"] {
+  color: #ffffff !important;
+}
+
+[class*="singleValue"] {
+  color: #ffffff !important;
+}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD INJECTION via JS
+   Se ejecuta solo en la página /admin (dashboard)
+══════════════════════════════════════════════════ */

@@ -27,11 +27,7 @@ Votaciones.belongsTo(Reclutas, { foreignKey: 'reclutaId' });
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
-
-const Components = {
-  GlobalStyle: componentLoader.add('GlobalStyle', './adminjs/components/empty.js'),
-  Dashboard:   componentLoader.add('Dashboard',   './adminjs/components/dashboard.js'),
-};
+componentLoader.add('GlobalStyle', './adminjs/components/empty.js');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -276,32 +272,12 @@ function formatearVotos(votos) {
 }
 
 
-// ─────────────────────────────────────────────────────────────────
-// DASHBOARD HANDLER — datos para el componente custom
-// ─────────────────────────────────────────────────────────────────
-const dashboardHandler = async () => {
-  const [miembros, reclutas, votaciones, sinPagar] = await Promise.all([
-    Miembros.count(),
-    Reclutas.count(),
-    Votaciones.count(),
-    Mensualidades.count({ where: { pagado: false } }),
-  ]);
-  return { miembros, reclutas, votaciones, sinPagar };
-};
-
-// ─────────────────────────────────────────────────────────────────
-// CONFIGURACIÓN ADMINJS
-// ─────────────────────────────────────────────────────────────────
 const adminJs = new AdminJS({
   componentLoader,
 
-  dashboard: {
-    component: Components.Dashboard,
-    handler: dashboardHandler,
-  },
-
   assets: {
     styles: ['/fear.css'],
+    scripts: ['/dashboard.js'],
   },
 
   resources: [
@@ -779,11 +755,6 @@ const adminJs = new AdminJS({
   },
 });
 
-// 🟩 Forzar bundling en cualquier entorno (producción incluida)
-process.env.NODE_ENV = 'development';
-adminJs.watch();
-process.env.NODE_ENV = 'production';
-
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN — sesión persistente en PostgreSQL
 // ─────────────────────────────────────────────────────────────────
@@ -821,6 +792,21 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
 );
 
 app.use(adminJs.options.rootPath, router);
+
+// 🟩 DASHBOARD — endpoint de stats para el CSS/JS inline
+app.get('/admin-stats', async (req, res) => {
+  try {
+    const [miembros, reclutas, votaciones, sinPagar] = await Promise.all([
+      Miembros.count(),
+      Reclutas.count(),
+      Votaciones.count(),
+      Mensualidades.count({ where: { pagado: false } }),
+    ]);
+    res.json({ miembros, reclutas, votaciones, sinPagar });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get('/', (req, res) => res.redirect('/admin'));
 
