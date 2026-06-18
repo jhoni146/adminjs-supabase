@@ -586,3 +586,28 @@ button.adminjs_Button svg {
 [class*="-placeholder"] {
   color: #555 !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX SELECT — valor seleccionado (singleValue)
+   Clase exacta del DOM inspeccionado
+══════════════════════════════════════════════════ */
+[class$="-singleValue"],
+div[class*="-singleValue"] {
+  color: var(--text) !important;
+}
+
+.adminjs_Select [class*="-singleValue"] {
+  color: var(--text) !important;
+}
+
+/* Control del select con valor */
+.adminjs_Select [class*="-control"] {
+  background: var(--bg-input) !important;
+  border-color: var(--border-hi) !important;
+}
+
+/* Input oculto dentro del select */
+.adminjs_Select input {
+  color: var(--text) !important;
+  opacity: 1 !important;
+}

@@ -15,6 +15,7 @@ import Votaciones from './models/Votaciones.js';
 import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas, notificarNuevoMiembro } from './discord.js';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
+import { bundleComponents } from '@adminjs/bundler';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
@@ -813,6 +814,10 @@ app.get('/', (req, res) => res.redirect('/admin'));
 const port = process.env.PORT || 3000;
 
 try {
+  // 🟩 Bundlear componentes custom ANTES de arrancar el servidor
+  await bundleComponents({ adminJsInstance: adminJs });
+  console.log('AdminJS: componentes bundleados correctamente.');
+
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
   await sequelize.sync({ alter: { drop: false } });
