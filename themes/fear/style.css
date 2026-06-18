@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+/* ── Tipografía global ── */
+*, body, input, button, select, textarea, a {
+  font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
+  letter-spacing: 0.04em;
+}
+
+/* ── Títulos en mayúsculas ── */
+h1, h2, h3, h4, h5, th {
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 700 !important;
+}
+
+/* ── Sin bordes redondeados ── */
+button, input, select, textarea,
+[class*="sc-"] {
+  border-radius: 0 !important;
+}
+
+/* ── Botones: uppercase + espaciado ── */
+button {
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-weight: 600 !important;
+}
+
+/* ── Tabla ── */
+th {
+  font-size: 11px !important;
+  color: #4a6e30 !important;
+  border-bottom: 2px solid #2e4520 !important;
+}
+
+td {
+  border-bottom: 1px solid #1e2e14 !important;
+  font-size: 15px !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0a0f08; }
+::-webkit-scrollbar-thumb { background: #2e4520; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #4a6e30; }
+
+/* ── data-css de AdminJS: botones de acción ── */
+[data-css*="action"] button,
+[data-css*="filter"] button {
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+}

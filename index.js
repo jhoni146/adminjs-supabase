@@ -281,6 +281,30 @@ function formatearVotos(votos) {
 const adminJs = new AdminJS({
   componentLoader,
 
+  defaultTheme: 'fear-military',
+  availableThemes: [
+    {
+      id: 'fear-military',
+      name: 'F.E.A.R Military',
+      overrides: {
+        colors: {
+          primary100: '#0a0f08',
+          primary80:  '#141f0f',
+          primary60:  '#1e2e14',
+          primary40:  '#2e4520',
+          primary20:  '#4a6e30',
+          accent:     '#b8952a',
+          hoverBg:    '#1e2e14',
+        },
+        fonts: {
+          base:     '"Barlow Condensed", "Roboto Condensed", sans-serif',
+          headings: '"Barlow Condensed", "Roboto Condensed", sans-serif',
+        },
+      },
+      stylePath: path.join(__dirname, 'themes/fear/style.css'),
+    },
+  ],
+
   resources: [
 
     // ── USUARIOS ──────────────────────────────────────────────────
@@ -710,38 +734,6 @@ const adminJs = new AdminJS({
     softwareBrothers: false,
     logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
     favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
-    theme: {
-      colors: {
-        // Fondos — de más oscuro a más claro
-        primary100: '#0a0f08',   // negro oliva profundo — fondo principal
-        primary80:  '#141f0f',   // fondo de sidebar y cabecera
-        primary60:  '#1e2e14',   // fondo de cards y tablas
-        primary40:  '#2e4520',   // bordes, separadores, hover suave
-        primary20:  '#4a6e30',   // elementos activos, badges
-
-        // Acento — dorado militar desaturado
-        accent:     '#b8952a',
-
-        // Hover
-        hoverBg:    '#1e2e14',
-
-        // Textos
-        filterBg:   '#0a0f08',
-        inputBorder:'#2e4520',
-
-        // Botones de acción
-        love:       '#8b1a1a',   // rojo oscuro para eliminar
-        success:    '#3a5e25',   // verde oscuro para éxito
-        info:       '#1e3d2a',   // verde azulado para info
-        warning:    '#7a5c1e',   // ámbar oscuro para avisos
-      },
-      fonts: {
-        // Barlow Condensed: compacta y militar
-        // Share Tech Mono: monoespaciada táctica para detalles
-        base:     '"Barlow Condensed", "Roboto Condensed", sans-serif',
-        headings: '"Barlow Condensed", "Roboto Condensed", sans-serif',
-      },
-    },
   },
 
   locale: {
@@ -823,59 +815,6 @@ const router = AdminJSExpress.buildAuthenticatedRouter(
     },
   }
 );
-
-// ─────────────────────────────────────────────────────────────────
-// 🟩 MIDDLEWARE: inyectar CSS militar en todas las páginas AdminJS
-// Intercepta el HTML que devuelve AdminJS y añade fuentes + estilos
-// ─────────────────────────────────────────────────────────────────
-app.use(adminJs.options.rootPath, (req, res, next) => {
-  const originalSend = res.send.bind(res);
-  res.send = (body) => {
-    if (typeof body === 'string' && body.includes('</head>')) {
-      const css = `
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-        <style>
-          *, body, input, button, select, textarea {
-            font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
-            letter-spacing: 0.03em;
-          }
-          h1, h2, h3, h4, h5 {
-            text-transform: uppercase !important;
-            letter-spacing: 0.08em !important;
-            font-weight: 700 !important;
-          }
-          button, [class*="Button"], a[class*="Button"] {
-            border-radius: 0 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.06em !important;
-            font-weight: 600 !important;
-          }
-          input, select, textarea {
-            border-radius: 0 !important;
-          }
-          td, th {
-            font-size: 15px !important;
-          }
-          th {
-            text-transform: uppercase !important;
-            letter-spacing: 0.08em !important;
-            font-size: 12px !important;
-            font-weight: 700 !important;
-          }
-          ::-webkit-scrollbar { width: 6px; height: 6px; }
-          ::-webkit-scrollbar-track { background: #0a0f08; }
-          ::-webkit-scrollbar-thumb { background: #2e4520; border-radius: 0; }
-          ::-webkit-scrollbar-thumb:hover { background: #4a6e30; }
-        </style>
-      `;
-      body = body.replace('</head>', css + '</head>');
-    }
-    return originalSend(body);
-  };
-  next();
-});
 
 app.use(adminJs.options.rootPath, router);
 
