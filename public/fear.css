@@ -291,43 +291,48 @@ label {
 
 /* ══════════════════════════════════════════════════
    VISTA SHOW / EDIT / NEW
+   Selectores exactos del DOM de AdminJS
 ══════════════════════════════════════════════════ */
-[data-css$="-show"],
-[data-css$="-edit"],
-[data-css$="-new"],
-[data-css$="-filter"] {
+
+/* Contenedor principal del show */
+[data-css$="-show-drawer-content"] {
   background: var(--bg-card) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
+  color: var(--text) !important;
+  padding: 16px !important;
 }
 
-/* Forzar fondo oscuro en TODOS los hijos de show */
-[data-css$="-show"] > *,
-[data-css$="-show"] > * > *,
-[data-css$="-show"] > * > * > * {
-  background: var(--bg-card) !important;
-}
-
-/* Labels dorado */
-[data-css$="-show"] label,
-[data-css$="-edit"] label,
-[data-css$="-new"] label {
-  color: var(--gold) !important;
+/* Cada sección de propiedad — el texto valor es text node directo aquí */
+[data-css*="-show-"] {
+  color: var(--text) !important;
   background: transparent !important;
 }
 
-/* Valores — texto blanco sobre card oscura */
-[data-css$="-show"] p,
-[data-css$="-show"] span,
-[data-css$="-show"] div,
-[data-css$="-show"] a,
-[data-css$="-show"] li,
-[data-css$="-show"] small,
-[data-css$="-show"] strong,
-[data-css$="-show"] time,
-[data-css$="-show"] h1,
-[data-css$="-show"] h2,
-[data-css$="-show"] h3 {
+/* Section interna que contiene label + text node */
+[data-css*="-show-"] section,
+[data-css*="-show-"] .adminjs_Box {
+  color: var(--text) !important;
+  background: transparent !important;
+}
+
+/* Labels dorado */
+[data-css*="-show-"] label,
+[data-css*="-show-"] .adminjs_Label {
+  color: var(--gold) !important;
+  background: transparent !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+/* Cualquier span/p/a dentro del show */
+[data-css*="-show-"] span,
+[data-css*="-show-"] p,
+[data-css*="-show-"] a,
+[data-css*="-show-"] div {
   color: var(--text) !important;
   background: transparent !important;
 }
