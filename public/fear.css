@@ -1,14 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
 
 /* ── Variables ── */
 :root {
-  --bg-main:      #0a0f08;
-  --bg-sidebar:   #141f0f;
-  --bg-card:      #1e2e14;
+  --bg-main:      #0d1509;
+  --bg-sidebar:   #111a0c;
+  --bg-card:      #182010;
+  --bg-input:     #1e2e14;
   --border:       #2e4520;
   --green-active: #4a6e30;
   --gold:         #b8952a;
   --text:         #c8d8b8;
+  --text-dim:     #7a9a6a;
 }
 
 /* ── Tipografía global ── */
@@ -17,7 +19,31 @@
   letter-spacing: 0.04em;
 }
 
-/* ── SIDEBAR ── */
+/* ════════════════════════════════════════
+   FONDO GENERAL — quitar el blanco
+════════════════════════════════════════ */
+html, body, #app, #app > div {
+  background-color: var(--bg-main) !important;
+  color: var(--text) !important;
+}
+
+/* Contenedor principal de contenido */
+section[data-css="content"],
+div[data-css="content"],
+main, [role="main"] {
+  background-color: var(--bg-main) !important;
+}
+
+/* Cards / cajas de formulario */
+div[class*="Box"],
+section[class*="Box"] {
+  background-color: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+/* ════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════ */
 section[data-css="sidebar"] {
   background-color: var(--bg-sidebar) !important;
   border-right: 1px solid var(--border) !important;
@@ -32,17 +58,17 @@ section[data-css="sidebar-resources"] {
   background: var(--bg-sidebar) !important;
 }
 
-[data-css="sidebar"] section a {
-  background: var(--bg-sidebar) !important;
+[data-css="sidebar"] a {
   color: var(--text) !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   border-left: 3px solid transparent !important;
+  transition: all 0.15s ease !important;
 }
 
-[data-css="sidebar"] section a:hover {
+[data-css="sidebar"] a:hover {
   background: var(--bg-card) !important;
   border-left: 3px solid var(--gold) !important;
   color: white !important;
@@ -52,13 +78,82 @@ section[data-css="sidebar-resources"] {
   fill: var(--green-active) !important;
 }
 
-/* ── TOPBAR ── */
-section[data-css="top-bar"] {
-  background-color: var(--bg-sidebar) !important;
-  border-bottom: 1px solid var(--border) !important;
+/* Etiqueta NAVEGACIÓN */
+[data-css="sidebar"] p,
+[data-css="sidebar"] span {
+  color: var(--text-dim) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.15em !important;
 }
 
-/* ── TABLAS ── */
+/* ════════════════════════════════════════
+   TOPBAR
+════════════════════════════════════════ */
+section[data-css="top-bar"],
+header {
+  background-color: var(--bg-sidebar) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-css="top-bar"] * {
+  color: var(--text) !important;
+}
+
+/* ════════════════════════════════════════
+   BREADCRUMB / TÍTULOS
+════════════════════════════════════════ */
+h1, h2, h3, h4, h5 {
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+}
+
+/* ════════════════════════════════════════
+   FORMULARIOS E INPUTS
+════════════════════════════════════════ */
+input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  background-color: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--text) !important;
+  caret-color: var(--text) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-dim) !important;
+}
+
+/* Labels de campos */
+label {
+  color: var(--text-dim) !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 600 !important;
+}
+
+/* ════════════════════════════════════════
+   TABLAS
+════════════════════════════════════════ */
+table {
+  background: var(--bg-card) !important;
+  width: 100%;
+}
+
+thead {
+  background: var(--bg-sidebar) !important;
+}
+
 th {
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
@@ -66,14 +161,23 @@ th {
   font-weight: 700 !important;
   color: var(--green-active) !important;
   border-bottom: 2px solid var(--border) !important;
+  background: var(--bg-sidebar) !important;
 }
 
 td {
-  border-bottom: 1px solid var(--bg-card) !important;
+  border-bottom: 1px solid var(--border) !important;
   font-size: 15px !important;
+  color: var(--text) !important;
+  background: transparent !important;
 }
 
-/* ── BOTONES ── */
+tr:hover td {
+  background: var(--bg-input) !important;
+}
+
+/* ════════════════════════════════════════
+   BOTONES
+════════════════════════════════════════ */
 button {
   border-radius: 0 !important;
   text-transform: uppercase !important;
@@ -81,26 +185,61 @@ button {
   font-weight: 600 !important;
 }
 
-/* ── INPUTS ── */
-input, select, textarea {
+/* ════════════════════════════════════════
+   DROPDOWN / SELECT custom
+════════════════════════════════════════ */
+[class*="menu"],
+[class*="MenuList"],
+[class*="option"] {
+  background-color: var(--bg-input) !important;
+  color: var(--text) !important;
   border-radius: 0 !important;
-  background: var(--bg-card) !important;
+}
+
+[class*="option"]:hover,
+[class*="option--is-focused"] {
+  background-color: var(--border) !important;
+  color: white !important;
+}
+
+[class*="control"] {
+  background-color: var(--bg-input) !important;
   border-color: var(--border) !important;
+  border-radius: 0 !important;
   color: var(--text) !important;
 }
 
-/* ── CARDS / SECTIONS ── */
-[data-css$="-show"],
-[data-css$="-edit"],
-[data-css$="-new"],
-[data-css$="-filter"] {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
+[class*="singleValue"],
+[class*="placeholder"] {
+  color: var(--text) !important;
 }
 
-/* ── SCROLLBAR táctica ── */
+/* ════════════════════════════════════════
+   BADGES / TAGS
+════════════════════════════════════════ */
+[class*="Badge"],
+[class*="badge"] {
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg-main); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: var(--green-active); }
+
+/* ════════════════════════════════════════
+   TEXTOS GENERALES
+════════════════════════════════════════ */
+p, span, a, li, div {
+  color: var(--text);
+}
+
+a:hover {
+  color: white !important;
+}
