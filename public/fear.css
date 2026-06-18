@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg-main:      #0a0f08;
+  --bg-sidebar:   #141f0f;
+  --bg-card:      #1e2e14;
+  --border:       #2e4520;
+  --green-active: #4a6e30;
+  --gold:         #b8952a;
+  --text:         #c8d8b8;
+}
+
+/* ── Tipografía global ── */
+* {
+  font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
+  letter-spacing: 0.04em;
+}
+
+/* ── SIDEBAR ── */
+section[data-css="sidebar"] {
+  background-color: var(--bg-sidebar) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+a[data-css="sidebar-logo"] {
+  background-color: var(--bg-sidebar) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+section[data-css="sidebar-resources"] {
+  background: var(--bg-sidebar) !important;
+}
+
+[data-css="sidebar"] section a {
+  background: var(--bg-sidebar) !important;
+  color: var(--text) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-left: 3px solid transparent !important;
+}
+
+[data-css="sidebar"] section a:hover {
+  background: var(--bg-card) !important;
+  border-left: 3px solid var(--gold) !important;
+  color: white !important;
+}
+
+[data-css="sidebar"] svg {
+  fill: var(--green-active) !important;
+}
+
+/* ── TOPBAR ── */
+section[data-css="top-bar"] {
+  background-color: var(--bg-sidebar) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* ── TABLAS ── */
+th {
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--green-active) !important;
+  border-bottom: 2px solid var(--border) !important;
+}
+
+td {
+  border-bottom: 1px solid var(--bg-card) !important;
+  font-size: 15px !important;
+}
+
+/* ── BOTONES ── */
+button {
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 600 !important;
+}
+
+/* ── INPUTS ── */
+input, select, textarea {
+  border-radius: 0 !important;
+  background: var(--bg-card) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* ── CARDS / SECTIONS ── */
+[data-css$="-show"],
+[data-css$="-edit"],
+[data-css$="-new"],
+[data-css$="-filter"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+}
+
+/* ── SCROLLBAR táctica ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--green-active); }

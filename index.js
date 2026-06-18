@@ -34,7 +34,8 @@ const GlobalStyleComponent = componentLoader.add(
 );
 
 const app = express();
-app.set('trust proxy', 1);  // Coolify/Nginx actúa como proxy — necesario para sesiones
+app.set('trust proxy', 1);
+app.use(express.static(path.join(__dirname, 'public')));
 
 AdminJS.registerAdapter({
   Resource: AdminJSSequelize.Resource,
@@ -281,29 +282,9 @@ function formatearVotos(votos) {
 const adminJs = new AdminJS({
   componentLoader,
 
-  defaultTheme: 'fear-military',
-  availableThemes: [
-    {
-      id: 'fear-military',
-      name: 'F.E.A.R Military',
-      overrides: {
-        colors: {
-          primary100: '#0a0f08',
-          primary80:  '#141f0f',
-          primary60:  '#1e2e14',
-          primary40:  '#2e4520',
-          primary20:  '#4a6e30',
-          accent:     '#b8952a',
-          hoverBg:    '#1e2e14',
-        },
-        fonts: {
-          base:     '"Barlow Condensed", "Roboto Condensed", sans-serif',
-          headings: '"Barlow Condensed", "Roboto Condensed", sans-serif',
-        },
-      },
-      stylePath: path.join(__dirname, 'themes/fear/style.css'),
-    },
-  ],
+  assets: {
+    styles: ['/fear.css'],
+  },
 
   resources: [
 
