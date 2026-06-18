@@ -611,3 +611,27 @@ div[class*="-singleValue"] {
   color: var(--text) !important;
   opacity: 1 !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX DEFINITIVO SELECT SINGLEVALUE
+   El valor seleccionado no se ve por color: inherit
+   Forzado con máxima especificidad
+══════════════════════════════════════════════════ */
+div[class*="singleValue"] {
+  color: #ffffff !important;
+}
+
+section[data-css$="-new-drawer-content"] div[class*="singleValue"],
+section[data-css$="-edit-drawer-content"] div[class*="singleValue"] {
+  color: #ffffff !important;
+}
+
+/* React Select container */
+.adminjs_Select div[class*="singleValue"] {
+  color: #ffffff !important;
+}
+
+/* Máxima especificidad posible */
+html body div[class*="singleValue"] {
+  color: #ffffff !important;
+}

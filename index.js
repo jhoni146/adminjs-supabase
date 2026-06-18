@@ -15,7 +15,6 @@ import Votaciones from './models/Votaciones.js';
 import { iniciarBotDiscord, notificarNuevasVotaciones, notificarResultadoVotacion, notificarNuevoRecluta, notificarMensualidadesGeneradas, notificarNuevoMiembro } from './discord.js';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
-import { bundle } from '@adminjs/bundler';
 
 Miembros.hasMany(Mensualidades, { foreignKey: 'miembroId' });
 Mensualidades.belongsTo(Miembros, { foreignKey: 'miembroId' });
@@ -814,10 +813,6 @@ app.get('/', (req, res) => res.redirect('/admin'));
 const port = process.env.PORT || 3000;
 
 try {
-  // 🟩 Bundlear componentes custom ANTES de arrancar el servidor
-  await bundle({ componentLoader, destinationDir: 'public' });
-  console.log('AdminJS: componentes bundleados correctamente.');
-
   await sequelize.authenticate();
   console.log('Conectado a Supabase (Postgres)');
   await sequelize.sync({ alter: { drop: false } });
@@ -827,7 +822,9 @@ try {
   await generarVotacionesAutomaticas();
   iniciarSchedulerVotaciones();
 
-  app.listen(port, () => {
+  app.listen(port, async () => {
+    // Esperar a que AdminJS termine de bundlear los componentes
+    await adminJs.watch();
     console.log(`Servidor escuchando en puerto ${port}`);
     console.log(`AdminJS en http://localhost:${port}${adminJs.options.rootPath}`);
   });
