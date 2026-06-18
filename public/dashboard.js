@@ -37,21 +37,17 @@
       </div>
     `;
 
-    // Buscar y reemplazar el contenedor del dashboard de AdminJS
-    // La clase exacta del DOM es adminjs_Box en el primer section de contenido
     const interval = setInterval(() => {
       if (document.getElementById('fear-dashboard')) {
         clearInterval(interval);
         return;
       }
 
-      // Buscar el contenedor específico del dashboard por defecto de AdminJS
-      // Tiene clase adminjs_Box y contiene links a docs.adminjs.co
+      // Buscar el section concreto del dashboard por defecto (contiene links a adminjs)
       const allBoxes = document.querySelectorAll('section.adminjs_Box');
       let defaultDash = null;
 
       for (const box of allBoxes) {
-        // El dashboard por defecto tiene links a adminjs.co
         if (box.innerHTML.includes('docs.adminjs.co') || box.innerHTML.includes('adminjs.page.link')) {
           defaultDash = box;
           break;
@@ -60,13 +56,10 @@
 
       if (!defaultDash) return;
 
-      // Reemplazar el contenido del contenedor padre
-      const parent = defaultDash.parentElement;
-      if (parent) {
-        parent.innerHTML = html;
-      } else {
-        defaultDash.outerHTML = html;
-      }
+      // Reemplazar solo el contenido interno del section, NO el padre
+      defaultDash.innerHTML = html;
+      // Quitar estilos que puedan interferir
+      defaultDash.removeAttribute('style');
 
       clearInterval(interval);
     }, 200);
