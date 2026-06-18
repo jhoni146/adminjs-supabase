@@ -711,10 +711,10 @@ const adminJs = new AdminJS({
   rootPath: '/admin',
 
   branding: {
-    companyName: '// CLAN F.E.A.R — OPS PANEL',
+    companyName: 'CLAN F.E.A.R — OPS PANEL',
     softwareBrothers: false,
-    logo: 'https://i.ibb.co/LdBxr4zr/fear512.png',
-    favicon: 'https://i.ibb.co/LdBxr4zr/fear512.png',
+    logo: 'https://i.ibb.co/qM7GkTsq/fear5N12.png',
+    favicon: 'https://i.ibb.co/qM7GkTsq/fear5N12.png',
   },
 
   locale: {

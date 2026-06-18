@@ -1,31 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&display=swap');
 
 /* ══════════════════════════════════════════════════
-   VARIABLES
+   PALETA CLAN F.E.A.R — basada en clanfear.es
 ══════════════════════════════════════════════════ */
 :root {
-  --bg:           #0e1a0b;
-  --bg-mid:       #162012;
-  --bg-card:      #1c2a16;
-  --bg-input:     #223318;
-  --border:       #354d26;
-  --border-light: #4a6e32;
-  --green-hi:     #72a84a;
-  --green-lo:     #4a6e32;
-  --gold:         #c4973a;
-  --gold-dim:     #8a6520;
-  --text:         #ddeec8;
-  --text-dim:     #9ab880;
-  --text-muted:   #5a7848;
-  --danger:       #7a2020;
-  --danger-hi:    #c04040;
+  --bg:           #111111;
+  --bg-mid:       #1a1a1a;
+  --bg-card:      #222222;
+  --bg-input:     #2a2a2a;
+  --border:       #333333;
+  --border-hi:    #444444;
+  --red:          #e02020;
+  --red-dim:      #991515;
+  --gold:         #f0b830;
+  --gold-dim:     #c49020;
+  --text:         #ffffff;
+  --text-dim:     #aaaaaa;
+  --text-muted:   #555555;
+  --success:      #2a7a2a;
+  --success-hi:   #3aaa3a;
 }
 
 /* ══════════════════════════════════════════════════
    BASE
 ══════════════════════════════════════════════════ */
 *, *::before, *::after {
-  font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
+  font-family: 'Barlow Condensed', sans-serif !important;
   letter-spacing: 0.04em;
   box-sizing: border-box;
 }
@@ -46,32 +46,26 @@ html, body {
 section[data-css="sidebar"] {
   background: var(--bg-mid) !important;
   border-right: 1px solid var(--border) !important;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.5) !important;
 }
 
 a[data-css="sidebar-logo"] {
   background: var(--bg-mid) !important;
   border-bottom: 1px solid var(--border) !important;
-  padding: 16px !important;
 }
 
 section[data-css="sidebar-resources"] {
   background: var(--bg-mid) !important;
-  padding-top: 8px !important;
 }
 
-/* Label NAVEGACIÓN */
 [data-css="sidebar-resources"] > p,
 [data-css="sidebar"] p {
   color: var(--text-muted) !important;
   font-size: 9px !important;
   letter-spacing: 0.25em !important;
   font-weight: 700 !important;
-  padding: 16px 20px 4px !important;
   text-transform: uppercase !important;
 }
 
-/* Links del sidebar */
 [data-css="sidebar"] a {
   color: var(--text-dim) !important;
   font-size: 13px !important;
@@ -80,11 +74,7 @@ section[data-css="sidebar-resources"] {
   text-transform: uppercase !important;
   border-left: 3px solid transparent !important;
   padding: 10px 20px !important;
-  margin: 1px 0 !important;
   transition: all 0.15s !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
 }
 
 [data-css="sidebar"] a:hover {
@@ -93,23 +83,15 @@ section[data-css="sidebar-resources"] {
   border-left-color: var(--gold-dim) !important;
 }
 
-/* Item activo */
 [data-css="sidebar"] a[class*="active"],
 [data-css="sidebar"] a[aria-current] {
   color: white !important;
   background: var(--bg-card) !important;
-  border-left-color: var(--gold) !important;
+  border-left-color: var(--red) !important;
 }
 
 [data-css="sidebar"] svg {
-  fill: var(--green-hi) !important;
-  opacity: 0.8;
-}
-
-/* Footer sidebar */
-[data-css="sidebar"] > div:last-child {
-  border-top: 1px solid var(--border) !important;
-  padding: 12px 0 !important;
+  fill: var(--text-muted) !important;
 }
 
 /* ══════════════════════════════════════════════════
@@ -118,74 +100,34 @@ section[data-css="sidebar-resources"] {
 section[data-css="top-bar"] {
   background: var(--bg-mid) !important;
   border-bottom: 1px solid var(--border) !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
 }
 
 [data-css="top-bar"] * {
-  color: var(--text) !important;
-}
-
-[data-css="top-bar"] button {
-  background: transparent !important;
-  border: 1px solid var(--border) !important;
   color: var(--text-dim) !important;
-  padding: 4px 12px !important;
-}
-
-[data-css="top-bar"] button:hover {
-  border-color: var(--gold-dim) !important;
-  color: var(--text) !important;
 }
 
 /* ══════════════════════════════════════════════════
-   TEXTOS FUERA DE TABLAS — área de contenido claro
+   TÍTULOS Y BREADCRUMB
 ══════════════════════════════════════════════════ */
-
-/* Título LISTA, CREAR NUEVO, etc */
 h1, h2, h3, h4 {
   text-transform: uppercase !important;
   letter-spacing: 0.12em !important;
-  font-weight: 700 !important;
-  color: #1e3010 !important;
+  font-weight: 800 !important;
+  color: var(--text) !important;
 }
 
-/* Breadcrumb: Panel / Reclutas */
 nav a, nav span,
 nav[aria-label="breadcrumb"] a,
 nav[aria-label="breadcrumb"] span,
 [data-css="breadcrumbs"] a,
-[data-css="breadcrumbs"] span,
-[data-css="breadcrumbs"] {
-  color: var(--green-lo) !important;
+[data-css="breadcrumbs"] span {
+  color: var(--text-dim) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   letter-spacing: 0.06em !important;
 }
 
-/* Badge con número de registros ej: [17] */
-[class*="Badge"],
-[class*="badge"],
-span[class*="badge"] {
-  background: var(--green-lo) !important;
-  color: white !important;
-  border-radius: 0 !important;
-  font-weight: 700 !important;
-  font-size: 11px !important;
-  padding: 2px 7px !important;
-}
-
-/* Botones Crear nuevo y Filtrar fuera de tabla */
-button, a[href*="new"] {
-  color: #1e3010 !important;
-  border-color: var(--green-lo) !important;
-  font-weight: 700 !important;
-}
-
-/* Texto "Español", email usuario en topbar */
-[data-css="top-bar"] *,
-header * {
-  color: #1e3010 !important;
-}
+nav a:hover { color: var(--text) !important; }
 
 /* ══════════════════════════════════════════════════
    TABLA
@@ -203,12 +145,12 @@ thead, thead tr {
 
 th {
   background: var(--bg-mid) !important;
-  color: var(--green-hi) !important;
+  color: var(--gold) !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: 0.15em !important;
   text-transform: uppercase !important;
-  border-bottom: 2px solid var(--border) !important;
+  border-bottom: 2px solid var(--red-dim) !important;
   padding: 12px 16px !important;
 }
 
@@ -222,12 +164,20 @@ td {
 
 tr:hover td {
   background: var(--bg-input) !important;
-  cursor: pointer;
 }
 
-/* Checkbox */
 input[type="checkbox"] {
-  accent-color: var(--green-hi) !important;
+  accent-color: var(--red) !important;
+}
+
+/* Badge número registros */
+[class*="Badge"], [class*="badge"] {
+  background: var(--red-dim) !important;
+  color: white !important;
+  border-radius: 0 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
 }
 
 /* ══════════════════════════════════════════════════
@@ -240,40 +190,30 @@ button {
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
   transition: all 0.15s !important;
-}
-
-/* Botón primario — verde militar */
-button[class*="primary"],
-button[variant="primary"],
-a[class*="primary"] {
-  background: var(--green-lo) !important;
-  border: 1px solid var(--green-hi) !important;
   color: var(--text) !important;
+  border-color: var(--border-hi) !important;
 }
 
-button[class*="primary"]:hover,
-a[class*="primary"]:hover {
-  background: var(--green-hi) !important;
+button:hover {
+  border-color: var(--red) !important;
   color: white !important;
 }
 
-/* Botón de acción + Crear nuevo */
-button[class*="contained"],
-a[class*="contained"] {
-  background: var(--green-lo) !important;
-  border: 1px solid var(--green-hi) !important;
-  color: var(--text) !important;
+button[class*="primary"],
+button[class*="contained"] {
+  background: var(--red-dim) !important;
+  border: 1px solid var(--red) !important;
+  color: white !important;
 }
 
+button[class*="primary"]:hover,
 button[class*="contained"]:hover {
-  background: var(--green-hi) !important;
+  background: var(--red) !important;
 }
 
-/* Botón danger / eliminar */
-button[class*="danger"],
-button[class*="Danger"] {
-  background: var(--danger) !important;
-  border-color: var(--danger-hi) !important;
+button[class*="danger"] {
+  background: #4a1010 !important;
+  border-color: var(--red) !important;
   color: #ffaaaa !important;
 }
 
@@ -281,8 +221,7 @@ button[class*="Danger"] {
    INPUTS Y FORMS
 ══════════════════════════════════════════════════ */
 input:not([type="checkbox"]):not([type="radio"]),
-textarea,
-select {
+textarea, select {
   background: var(--bg-input) !important;
   border: 1px solid var(--border) !important;
   border-radius: 0 !important;
@@ -290,15 +229,13 @@ select {
   caret-color: var(--gold) !important;
   padding: 8px 12px !important;
   font-size: 14px !important;
-  transition: border-color 0.15s !important;
 }
 
 input:not([type="checkbox"]):focus,
-textarea:focus,
-select:focus {
-  border-color: var(--green-hi) !important;
+textarea:focus, select:focus {
+  border-color: var(--red) !important;
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(90,128,56,0.2) !important;
+  box-shadow: 0 0 0 2px rgba(224,32,32,0.15) !important;
 }
 
 input::placeholder, textarea::placeholder {
@@ -306,207 +243,111 @@ input::placeholder, textarea::placeholder {
 }
 
 label {
-  color: var(--text-dim) !important;
-  font-size: 11px !important;
+  color: var(--gold) !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.12em !important;
+  letter-spacing: 0.15em !important;
   text-transform: uppercase !important;
   display: block !important;
   margin-bottom: 4px !important;
 }
 
 /* ══════════════════════════════════════════════════
-   REACT SELECT (dropdowns)
+   REACT SELECT
 ══════════════════════════════════════════════════ */
-[class$="-control"],
-[class*="-control"] {
+[class$="-control"], [class*="-control"] {
   background: var(--bg-input) !important;
   border-color: var(--border) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  min-height: 38px !important;
 }
 
-[class$="-control"]:hover {
-  border-color: var(--green-hi) !important;
-}
+[class$="-control"]:hover { border-color: var(--red) !important; }
 
-[class$="-menu"],
-[class*="-menu"] {
+[class$="-menu"], [class*="-menu"] {
   background: var(--bg-card) !important;
   border: 1px solid var(--border) !important;
   border-radius: 0 !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
-  z-index: 9999 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.8) !important;
 }
 
-[class$="-MenuList"],
-[class*="-MenuList"] {
-  background: var(--bg-card) !important;
-  padding: 4px 0 !important;
-}
-
-[class$="-option"],
-[class*="-option"] {
+[class$="-option"], [class*="-option"] {
   background: transparent !important;
   color: var(--text) !important;
   font-size: 13px !important;
   padding: 8px 14px !important;
-  cursor: pointer !important;
 }
 
-[class$="-option"]:hover,
-[class*="option--is-focused"] {
-  background: var(--bg-input) !important;
-  color: white !important;
-}
+[class*="option--is-focused"] { background: var(--bg-input) !important; }
+[class*="option--is-selected"] { background: var(--red-dim) !important; color: white !important; }
 
-[class*="option--is-selected"] {
-  background: var(--green-lo) !important;
-  color: white !important;
-}
-
-[class$="-singleValue"],
-[class*="-singleValue"],
-[class$="-placeholder"],
-[class*="-placeholder"] {
+[class$="-singleValue"], [class*="-singleValue"],
+[class$="-placeholder"], [class*="-placeholder"] {
   color: var(--text) !important;
-  font-size: 14px !important;
 }
 
-[class$="-indicatorSeparator"] {
-  background: var(--border) !important;
-}
-
-[class$="-dropdownIndicator"] svg,
-[class*="-dropdownIndicator"] svg {
-  fill: var(--text-dim) !important;
-}
+[class$="-indicatorSeparator"] { background: var(--border) !important; }
+[class$="-dropdownIndicator"] svg { fill: var(--text-muted) !important; }
 
 /* ══════════════════════════════════════════════════
-   CARDS / PANELS - fondo claro, textos oscuros
+   VISTA SHOW / EDIT / NEW — fondo oscuro
 ══════════════════════════════════════════════════ */
+[data-css$="-show"],
+[data-css$="-edit"],
+[data-css$="-new"],
+[data-css$="-filter"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+}
 
-/* Labels de campos */
 [data-css$="-show"] label,
 [data-css$="-edit"] label,
 [data-css$="-new"] label {
-  color: var(--green-lo) !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
+  color: var(--gold) !important;
 }
 
-/* Valores de campos — todo texto dentro del show */
 [data-css$="-show"] p,
 [data-css$="-show"] span,
 [data-css$="-show"] div,
 [data-css$="-show"] a,
-[data-css$="-show"] td,
 [data-css$="-show"] li,
 [data-css$="-show"] small,
-[data-css$="-show"] strong {
-  color: #1e3010 !important;
-}
-
-/* Títulos h1/h2 en vista show */
+[data-css$="-show"] strong,
 [data-css$="-show"] h1,
 [data-css$="-show"] h2,
 [data-css$="-show"] h3 {
-  color: #1e3010 !important;
-}
-
-/* Mismo para edit y new */
-[data-css$="-edit"] p,
-[data-css$="-edit"] span,
-[data-css$="-edit"] div,
-[data-css$="-new"] p,
-[data-css$="-new"] span,
-[data-css$="-new"] div {
-  color: #1e3010 !important;
-}
-
-/* Breadcrumb sobre fondo claro */
-nav a, nav span {
-  color: var(--green-lo) !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
+  color: var(--text) !important;
 }
 
 /* ══════════════════════════════════════════════════
-   LOGIN
-══════════════════════════════════════════════════ */
-[data-css="login"],
-section[data-css="login"] {
-  background: var(--bg-mid) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.7) !important;
-  border-radius: 0 !important;
-}
-
-[data-css="login-wrapper"],
-section[data-css="login-wrapper"] {
-  background: var(--bg) !important;
-}
-
-/* ══════════════════════════════════════════════════
-   NOTIFICACIONES / TOASTS
+   NOTIFICACIONES
 ══════════════════════════════════════════════════ */
 [data-css="notice-success"] {
-  background: var(--green-lo) !important;
-  border-left: 4px solid var(--green-hi) !important;
+  background: var(--success) !important;
+  border-left: 4px solid var(--success-hi) !important;
   color: white !important;
   border-radius: 0 !important;
 }
 
 [data-css="notice-error"] {
-  background: var(--danger) !important;
-  border-left: 4px solid var(--danger-hi) !important;
+  background: #4a1010 !important;
+  border-left: 4px solid var(--red) !important;
   color: white !important;
   border-radius: 0 !important;
 }
 
 /* ══════════════════════════════════════════════════
-   PAGINACIÓN
+   TEXTOS GENERALES
 ══════════════════════════════════════════════════ */
-[data-css="pagination"] button,
-[data-css*="page"] button {
-  background: var(--bg-input) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--text-dim) !important;
-  min-width: 32px !important;
-  height: 32px !important;
-}
-
-[data-css="pagination"] button:hover {
-  border-color: var(--green-hi) !important;
-  color: var(--text) !important;
-}
-
-[data-css="pagination"] button[class*="active"] {
-  background: var(--green-lo) !important;
-  border-color: var(--green-hi) !important;
-  color: white !important;
-}
+p, span, div, li { color: var(--text); }
+a { color: var(--text-dim) !important; }
+a:hover { color: var(--text) !important; }
 
 /* ══════════════════════════════════════════════════
    SCROLLBAR
 ══════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: var(--green-hi); }
-
-/* ══════════════════════════════════════════════════
-   TEXTOS GENERALES
-══════════════════════════════════════════════════ */
-p, span, div, li {
-  color: var(--text);
-}
-
-a { color: var(--text-dim) !important; }
-a:hover { color: var(--text) !important; }
-
-/* Quitar azules de AdminJS por defecto */
-* { --admin-primary: var(--green-hi) !important; }
+::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--red); }
