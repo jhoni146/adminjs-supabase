@@ -779,8 +779,10 @@ const adminJs = new AdminJS({
   },
 });
 
-// 🟩 Iniciar bundling de componentes custom
+// 🟩 Forzar bundling en cualquier entorno (producción incluida)
+process.env.NODE_ENV = 'development';
 adminJs.watch();
+process.env.NODE_ENV = 'production';
 
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN — sesión persistente en PostgreSQL
