@@ -566,3 +566,23 @@ a.adminjs_Button svg,
 button.adminjs_Button svg {
   stroke: currentColor !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX SELECT — valor seleccionado visible
+══════════════════════════════════════════════════ */
+[class*="-singleValue"] {
+  color: var(--text) !important;
+}
+
+[class*="-Input"] input,
+[class*="-Input"] {
+  color: var(--text) !important;
+}
+
+[class*="-ValueContainer"] {
+  color: var(--text) !important;
+}
+
+[class*="-placeholder"] {
+  color: #555 !important;
+}
