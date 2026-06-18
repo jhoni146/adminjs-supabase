@@ -1,32 +1,22 @@
 import React, { useState, useEffect } from 'react'
+import { ApiClient } from 'adminjs'
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({ miembros: null, reclutas: null, votaciones: null, sinPagar: null })
+  const [data, setData] = useState(null)
 
   useEffect(() => {
-    Promise.all([
-      fetch('/admin/api/resources/Miembros/actions/list?perPage=1').then(r => r.json()).catch(() => ({})),
-      fetch('/admin/api/resources/Reclutas/actions/list?perPage=1').then(r => r.json()).catch(() => ({})),
-      fetch('/admin/api/resources/Votaciones/actions/list?perPage=1').then(r => r.json()).catch(() => ({})),
-      fetch('/admin/api/resources/Mensualidades/actions/list?perPage=1&filters.pagado=false').then(r => r.json()).catch(() => ({})),
-    ]).then(([m, r, v, men]) => {
-      setStats({
-        miembros:   m?.meta?.total ?? 0,
-        reclutas:   r?.meta?.total ?? 0,
-        votaciones: v?.meta?.total ?? 0,
-        sinPagar:   men?.meta?.total ?? 0,
-      })
-    })
+    const api = new ApiClient()
+    api.getDashboard()
+      .then(response => setData(response.data))
+      .catch(err => console.error('Dashboard error:', err))
   }, [])
 
-  const cards = [
-    { label: 'Miembros',          value: stats.miembros,   icon: '🪖', color: '#f0b830', href: '/admin/resources/Miembros',     sub: 'Miembros activos del clan' },
-    { label: 'Reclutas',          value: stats.reclutas,   icon: '🔫', color: '#e02020', href: '/admin/resources/Reclutas',     sub: 'En periodo de reclutamiento' },
-    { label: 'Votaciones abiertas', value: stats.votaciones, icon: '🗳️', color: '#4a9aff', href: '/admin/resources/Votaciones', sub: 'Pendientes de resolución' },
-    { label: 'Cuotas sin pagar',  value: stats.sinPagar,   icon: '💰', color: '#e07020', href: '/admin/resources/Mensualidades', sub: 'Mensualidades pendientes' },
-  ]
-
-  const loading = stats.miembros === null
+  const cards = data ? [
+    { label: 'Miembros',            value: data.miembros,   icon: '🪖', color: '#f0b830', href: '/admin/resources/Miembros',     sub: 'Miembros activos del clan' },
+    { label: 'Reclutas',            value: data.reclutas,   icon: '🔫', color: '#e02020', href: '/admin/resources/Reclutas',     sub: 'En periodo de reclutamiento' },
+    { label: 'Votaciones abiertas', value: data.votaciones, icon: '🗳️', color: '#4a9aff', href: '/admin/resources/Votaciones',   sub: 'Pendientes de resolución' },
+    { label: 'Cuotas sin pagar',    value: data.sinPagar,   icon: '💰', color: '#e07020', href: '/admin/resources/Mensualidades', sub: 'Mensualidades pendientes' },
+  ] : []
 
   return React.createElement('div', {
     style: { minHeight: '100vh', background: '#111', padding: '40px 48px', fontFamily: "'Barlow Condensed', sans-serif", color: '#fff' }
@@ -52,8 +42,13 @@ const Dashboard = () => {
       style: { color: '#444', fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }
     }, '── Estadísticas del clan'),
 
+    // Loading
+    !data && React.createElement('div', {
+      style: { color: '#444', fontSize: 16, letterSpacing: '0.1em' }
+    }, 'Cargando estadísticas...'),
+
     // Cards grid
-    React.createElement('div', {
+    data && React.createElement('div', {
       style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }
     },
       ...cards.map(card =>
@@ -65,9 +60,7 @@ const Dashboard = () => {
           },
             React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 } },
               React.createElement('div', { style: { fontSize: 28 } }, card.icon),
-              React.createElement('div', { style: { color: card.color, fontSize: 44, fontWeight: 800, lineHeight: 1 } },
-                loading ? '…' : card.value
-              )
+              React.createElement('div', { style: { color: card.color, fontSize: 44, fontWeight: 800, lineHeight: 1 } }, card.value)
             ),
             React.createElement('div', { style: { color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 } }, card.label),
             React.createElement('div', { style: { color: '#555', fontSize: 12 } }, card.sub)

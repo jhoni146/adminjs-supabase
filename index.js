@@ -28,15 +28,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
 
-const GlobalStyleComponent = componentLoader.add(
-  'GlobalStyle',
-  path.join(__dirname, 'adminjs/components/empty.js')
-);
-
-const DashboardComponent = componentLoader.add(
-  'Dashboard',
-  path.join(__dirname, 'adminjs/components/dashboard.js')
-);
+const Components = {
+  GlobalStyle: componentLoader.add('GlobalStyle', './adminjs/components/empty.js'),
+  Dashboard:   componentLoader.add('Dashboard',   './adminjs/components/dashboard.js'),
+};
 
 const app = express();
 app.set('trust proxy', 1);
@@ -282,13 +277,27 @@ function formatearVotos(votos) {
 
 
 // ─────────────────────────────────────────────────────────────────
+// DASHBOARD HANDLER — datos para el componente custom
+// ─────────────────────────────────────────────────────────────────
+const dashboardHandler = async () => {
+  const [miembros, reclutas, votaciones, sinPagar] = await Promise.all([
+    Miembros.count(),
+    Reclutas.count(),
+    Votaciones.count(),
+    Mensualidades.count({ where: { pagado: false } }),
+  ]);
+  return { miembros, reclutas, votaciones, sinPagar };
+};
+
+// ─────────────────────────────────────────────────────────────────
 // CONFIGURACIÓN ADMINJS
 // ─────────────────────────────────────────────────────────────────
 const adminJs = new AdminJS({
   componentLoader,
 
   dashboard: {
-    component: DashboardComponent,
+    component: Components.Dashboard,
+    handler: dashboardHandler,
   },
 
   assets: {
@@ -769,6 +778,9 @@ const adminJs = new AdminJS({
     },
   },
 });
+
+// 🟩 Iniciar bundling de componentes custom
+adminJs.watch();
 
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN — sesión persistente en PostgreSQL
