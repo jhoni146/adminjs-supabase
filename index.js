@@ -28,8 +28,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const componentLoader = new ComponentLoader();
 
-componentLoader.add(
-  'Empty',
+const GlobalStyleComponent = componentLoader.add(
+  'GlobalStyle',
   path.join(__dirname, 'adminjs/components/empty.js')
 );
 
@@ -280,6 +280,15 @@ function formatearVotos(votos) {
 // ─────────────────────────────────────────────────────────────────
 const adminJs = new AdminJS({
   componentLoader,
+
+  dashboard: {
+    component: GlobalStyleComponent,
+  },
+
+  overrides: {
+    // Inyecta GlobalStyle en TODAS las páginas del panel
+    Layout: GlobalStyleComponent,
+  },
 
   resources: [
 
