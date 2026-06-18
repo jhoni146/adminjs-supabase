@@ -290,7 +290,7 @@ label {
 [class$="-dropdownIndicator"] svg { fill: var(--text-muted) !important; }
 
 /* ══════════════════════════════════════════════════
-   VISTA SHOW / EDIT / NEW — fondo oscuro
+   VISTA SHOW / EDIT / NEW
 ══════════════════════════════════════════════════ */
 [data-css$="-show"],
 [data-css$="-edit"],
@@ -301,12 +301,14 @@ label {
   border-radius: 0 !important;
 }
 
+/* Labels dorado */
 [data-css$="-show"] label,
 [data-css$="-edit"] label,
 [data-css$="-new"] label {
   color: var(--gold) !important;
 }
 
+/* Valores — todo lo que hay debajo del label */
 [data-css$="-show"] p,
 [data-css$="-show"] span,
 [data-css$="-show"] div,
@@ -318,6 +320,55 @@ label {
 [data-css$="-show"] h2,
 [data-css$="-show"] h3 {
   color: var(--text) !important;
+}
+
+/* Área de contenido fuera de tabla — títulos y breadcrumb */
+h1, h2, h3, h4 {
+  text-transform: uppercase !important;
+  letter-spacing: 0.12em !important;
+  font-weight: 800 !important;
+  color: #1a1a1a !important;
+}
+
+nav a, nav span,
+nav[aria-label="breadcrumb"] a,
+nav[aria-label="breadcrumb"] span,
+[data-css="breadcrumbs"] a,
+[data-css="breadcrumbs"] span {
+  color: #444444 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* Botones Votar Apto / No apto sobre fondo claro */
+button {
+  border-radius: 0 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  transition: all 0.15s !important;
+  color: #1a1a1a !important;
+  border-color: #cccccc !important;
+}
+
+button:hover {
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+}
+
+/* Dropdown idioma sobre fondo claro */
+[data-css="top-bar"] button,
+[data-css="top-bar"] span,
+[data-css="top-bar"] a {
+  color: #1a1a1a !important;
+}
+
+/* Filtrar texto */
+[class*="filter"] span,
+[class*="Filter"] span {
+  color: #1a1a1a !important;
 }
 
 /* ══════════════════════════════════════════════════
