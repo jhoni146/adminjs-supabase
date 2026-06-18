@@ -10,7 +10,7 @@
     ];
 
     const html = `
-      <div id="fear-dashboard" style="min-height:100vh;background:#111;padding:40px 48px;font-family:'Barlow Condensed',sans-serif;color:#fff;">
+      <div id="fear-dashboard" style="min-height:80vh;background:#111;padding:40px 48px;font-family:'Barlow Condensed',sans-serif;color:#fff;">
         <div style="display:flex;align-items:center;gap:20px;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid #2a2a2a;">
           <img src="https://i.ibb.co/qM7GkTsq/fear5N12.png" style="width:64px;height:64px;object-fit:contain;" />
           <div>
@@ -37,37 +37,45 @@
       </div>
     `;
 
-    // Esperar a que AdminJS monte el contenido y reemplazarlo
+    // Buscar el contenedor raíz del contenido de AdminJS y reemplazarlo entero
     const interval = setInterval(() => {
-      // Buscar el contenedor principal de contenido de AdminJS
-      const selectors = [
-        '[data-css="content"]',
-        'section[data-css*="dashboard"]',
-        'main',
-      ];
-      let target = null;
-      for (const sel of selectors) {
-        target = document.querySelector(sel);
-        if (target) break;
-      }
-      if (!target) return;
-
-      // Solo reemplazar si aún no hemos puesto el dashboard
       if (document.getElementById('fear-dashboard')) {
         clearInterval(interval);
         return;
       }
 
+      // AdminJS renderiza el dashboard por defecto dentro de estos contenedores
+      // Buscamos el más específico primero
+      const candidates = [
+        document.querySelector('[data-css="default-dashboard"]'),
+        document.querySelector('section[data-css*="dashboard"]'),
+        document.querySelector('[class*="DefaultDashboard"]'),
+        document.querySelector('[class*="default-dashboard"]'),
+        // Fallback: el contenedor de contenido principal
+        document.querySelector('[data-css="content"]'),
+        document.querySelector('main'),
+      ];
+
+      const target = candidates.find(el => el !== null);
+      if (!target) return;
+
+      // Limpiar TODO el contenido del contenedor y poner el nuestro
       target.innerHTML = html;
       clearInterval(interval);
-    }, 200);
+    }, 150);
   }
 
-  // Esperar a que la página cargue y luego inyectar
-  window.addEventListener('load', () => {
+  // Arrancar cuando el DOM esté listo
+  function init() {
     fetch('/admin-stats')
       .then(r => r.json())
       .then(data => renderDashboard(data))
       .catch(err => console.error('Dashboard stats error:', err));
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
