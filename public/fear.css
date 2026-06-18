@@ -1,245 +1,443 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
-/* ── Variables ── */
+/* ══════════════════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════════════════ */
 :root {
-  --bg-main:      #0d1509;
-  --bg-sidebar:   #111a0c;
-  --bg-card:      #182010;
-  --bg-input:     #1e2e14;
-  --border:       #2e4520;
-  --green-active: #4a6e30;
-  --gold:         #b8952a;
-  --text:         #c8d8b8;
-  --text-dim:     #7a9a6a;
+  --bg:           #0b110a;
+  --bg-mid:       #121a0f;
+  --bg-card:      #192113;
+  --bg-input:     #1f2d17;
+  --border:       #2a3d1e;
+  --border-light: #3a5228;
+  --green-hi:     #5a8038;
+  --green-lo:     #3a5228;
+  --gold:         #c4973a;
+  --gold-dim:     #8a6520;
+  --text:         #d4e8c0;
+  --text-dim:     #7a9870;
+  --text-muted:   #4a6040;
+  --danger:       #7a2020;
+  --danger-hi:    #c04040;
 }
 
-/* ── Tipografía global ── */
-* {
+/* ══════════════════════════════════════════════════
+   BASE
+══════════════════════════════════════════════════ */
+*, *::before, *::after {
   font-family: 'Barlow Condensed', 'Roboto Condensed', sans-serif !important;
   letter-spacing: 0.04em;
+  box-sizing: border-box;
 }
 
-/* ════════════════════════════════════════
-   FONDO GENERAL — quitar el blanco
-════════════════════════════════════════ */
-html, body, #app, #app > div {
-  background-color: var(--bg-main) !important;
+html, body {
+  background: var(--bg) !important;
   color: var(--text) !important;
+  min-height: 100vh;
 }
 
-/* Contenedor principal de contenido */
-section[data-css="content"],
-div[data-css="content"],
-main, [role="main"] {
-  background-color: var(--bg-main) !important;
+#app, #app > div, #app > div > div {
+  background: var(--bg) !important;
 }
 
-/* Cards / cajas de formulario */
-div[class*="Box"],
-section[class*="Box"] {
-  background-color: var(--bg-card) !important;
-  color: var(--text) !important;
-}
-
-/* ════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    SIDEBAR
-════════════════════════════════════════ */
+══════════════════════════════════════════════════ */
 section[data-css="sidebar"] {
-  background-color: var(--bg-sidebar) !important;
+  background: var(--bg-mid) !important;
   border-right: 1px solid var(--border) !important;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.5) !important;
 }
 
 a[data-css="sidebar-logo"] {
-  background-color: var(--bg-sidebar) !important;
+  background: var(--bg-mid) !important;
   border-bottom: 1px solid var(--border) !important;
+  padding: 16px !important;
 }
 
 section[data-css="sidebar-resources"] {
-  background: var(--bg-sidebar) !important;
+  background: var(--bg-mid) !important;
+  padding-top: 8px !important;
 }
 
-[data-css="sidebar"] a {
-  color: var(--text) !important;
+/* Label NAVEGACIÓN */
+[data-css="sidebar-resources"] > p,
+[data-css="sidebar"] p {
+  color: var(--text-muted) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.25em !important;
+  font-weight: 700 !important;
+  padding: 16px 20px 4px !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+}
+
+/* Links del sidebar */
+[data-css="sidebar"] a {
+  color: var(--text-dim) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
   border-left: 3px solid transparent !important;
-  transition: all 0.15s ease !important;
+  padding: 10px 20px !important;
+  margin: 1px 0 !important;
+  transition: all 0.15s !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
 }
 
 [data-css="sidebar"] a:hover {
+  color: var(--text) !important;
   background: var(--bg-card) !important;
-  border-left: 3px solid var(--gold) !important;
+  border-left-color: var(--gold-dim) !important;
+}
+
+/* Item activo */
+[data-css="sidebar"] a[class*="active"],
+[data-css="sidebar"] a[aria-current] {
   color: white !important;
+  background: var(--bg-card) !important;
+  border-left-color: var(--gold) !important;
 }
 
 [data-css="sidebar"] svg {
-  fill: var(--green-active) !important;
+  fill: var(--green-hi) !important;
+  opacity: 0.8;
 }
 
-/* Etiqueta NAVEGACIÓN */
-[data-css="sidebar"] p,
-[data-css="sidebar"] span {
-  color: var(--text-dim) !important;
-  font-size: 10px !important;
-  letter-spacing: 0.15em !important;
+/* Footer sidebar */
+[data-css="sidebar"] > div:last-child {
+  border-top: 1px solid var(--border) !important;
+  padding: 12px 0 !important;
 }
 
-/* ════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    TOPBAR
-════════════════════════════════════════ */
-section[data-css="top-bar"],
-header {
-  background-color: var(--bg-sidebar) !important;
+══════════════════════════════════════════════════ */
+section[data-css="top-bar"] {
+  background: var(--bg-mid) !important;
   border-bottom: 1px solid var(--border) !important;
-  color: var(--text) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
 }
 
 [data-css="top-bar"] * {
   color: var(--text) !important;
 }
 
-/* ════════════════════════════════════════
-   BREADCRUMB / TÍTULOS
-════════════════════════════════════════ */
-h1, h2, h3, h4, h5 {
+[data-css="top-bar"] button {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-dim) !important;
+  padding: 4px 12px !important;
+}
+
+[data-css="top-bar"] button:hover {
+  border-color: var(--gold-dim) !important;
+  color: var(--text) !important;
+}
+
+/* ══════════════════════════════════════════════════
+   BREADCRUMB Y TÍTULOS
+══════════════════════════════════════════════════ */
+h1, h2, h3, h4 {
   text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
+  letter-spacing: 0.12em !important;
   font-weight: 700 !important;
   color: var(--text) !important;
 }
 
-/* ════════════════════════════════════════
-   FORMULARIOS E INPUTS
-════════════════════════════════════════ */
-input,
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="number"],
-input[type="date"],
-textarea,
-select {
-  background-color: var(--bg-input) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
-  color: var(--text) !important;
-  caret-color: var(--text) !important;
-}
+h1 { font-size: 22px !important; }
+h2 { font-size: 18px !important; }
 
-input::placeholder,
-textarea::placeholder {
+/* Breadcrumb */
+nav[aria-label="breadcrumb"] a,
+[data-css="breadcrumbs"] a {
   color: var(--text-dim) !important;
+  font-size: 12px !important;
 }
 
-/* Labels de campos */
-label {
-  color: var(--text-dim) !important;
-  text-transform: uppercase !important;
-  font-size: 11px !important;
-  letter-spacing: 0.1em !important;
-  font-weight: 600 !important;
-}
-
-/* ════════════════════════════════════════
-   TABLAS
-════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   TABLA
+══════════════════════════════════════════════════ */
 table {
   background: var(--bg-card) !important;
-  width: 100%;
+  border: 1px solid var(--border) !important;
+  border-collapse: collapse !important;
+  width: 100% !important;
 }
 
-thead {
-  background: var(--bg-sidebar) !important;
+thead, thead tr {
+  background: var(--bg-mid) !important;
 }
 
 th {
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
-  font-size: 11px !important;
+  background: var(--bg-mid) !important;
+  color: var(--green-hi) !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
-  color: var(--green-active) !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
   border-bottom: 2px solid var(--border) !important;
-  background: var(--bg-sidebar) !important;
+  padding: 12px 16px !important;
 }
 
 td {
-  border-bottom: 1px solid var(--border) !important;
-  font-size: 15px !important;
   color: var(--text) !important;
+  font-size: 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 11px 16px !important;
   background: transparent !important;
 }
 
 tr:hover td {
   background: var(--bg-input) !important;
+  cursor: pointer;
 }
 
-/* ════════════════════════════════════════
+/* Checkbox */
+input[type="checkbox"] {
+  accent-color: var(--green-hi) !important;
+}
+
+/* ══════════════════════════════════════════════════
    BOTONES
-════════════════════════════════════════ */
+══════════════════════════════════════════════════ */
 button {
   border-radius: 0 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
-  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  transition: all 0.15s !important;
 }
 
-/* ════════════════════════════════════════
-   DROPDOWN / SELECT custom
-════════════════════════════════════════ */
-[class*="menu"],
-[class*="MenuList"],
-[class*="option"] {
-  background-color: var(--bg-input) !important;
+/* Botón primario — verde militar */
+button[class*="primary"],
+button[variant="primary"],
+a[class*="primary"] {
+  background: var(--green-lo) !important;
+  border: 1px solid var(--green-hi) !important;
   color: var(--text) !important;
-  border-radius: 0 !important;
 }
 
-[class*="option"]:hover,
-[class*="option--is-focused"] {
-  background-color: var(--border) !important;
+button[class*="primary"]:hover,
+a[class*="primary"]:hover {
+  background: var(--green-hi) !important;
   color: white !important;
 }
 
-[class*="control"] {
-  background-color: var(--bg-input) !important;
+/* Botón de acción + Crear nuevo */
+button[class*="contained"],
+a[class*="contained"] {
+  background: var(--green-lo) !important;
+  border: 1px solid var(--green-hi) !important;
+  color: var(--text) !important;
+}
+
+button[class*="contained"]:hover {
+  background: var(--green-hi) !important;
+}
+
+/* Botón danger / eliminar */
+button[class*="danger"],
+button[class*="Danger"] {
+  background: var(--danger) !important;
+  border-color: var(--danger-hi) !important;
+  color: #ffaaaa !important;
+}
+
+/* ══════════════════════════════════════════════════
+   INPUTS Y FORMS
+══════════════════════════════════════════════════ */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--text) !important;
+  caret-color: var(--gold) !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  transition: border-color 0.15s !important;
+}
+
+input:not([type="checkbox"]):focus,
+textarea:focus,
+select:focus {
+  border-color: var(--green-hi) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(90,128,56,0.2) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+label {
+  color: var(--text-dim) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+/* ══════════════════════════════════════════════════
+   REACT SELECT (dropdowns)
+══════════════════════════════════════════════════ */
+[class$="-control"],
+[class*="-control"] {
+  background: var(--bg-input) !important;
   border-color: var(--border) !important;
   border-radius: 0 !important;
-  color: var(--text) !important;
+  box-shadow: none !important;
+  min-height: 38px !important;
 }
 
-[class*="singleValue"],
-[class*="placeholder"] {
-  color: var(--text) !important;
+[class$="-control"]:hover {
+  border-color: var(--green-hi) !important;
 }
 
-/* ════════════════════════════════════════
-   BADGES / TAGS
-════════════════════════════════════════ */
-[class*="Badge"],
-[class*="badge"] {
+[class$="-menu"],
+[class*="-menu"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 0 !important;
-  text-transform: uppercase !important;
-  font-size: 11px !important;
-  letter-spacing: 0.06em !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+  z-index: 9999 !important;
 }
 
-/* ════════════════════════════════════════
-   SCROLLBAR
-════════════════════════════════════════ */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--bg-main); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: var(--green-active); }
+[class$="-MenuList"],
+[class*="-MenuList"] {
+  background: var(--bg-card) !important;
+  padding: 4px 0 !important;
+}
 
-/* ════════════════════════════════════════
+[class$="-option"],
+[class*="-option"] {
+  background: transparent !important;
+  color: var(--text) !important;
+  font-size: 13px !important;
+  padding: 8px 14px !important;
+  cursor: pointer !important;
+}
+
+[class$="-option"]:hover,
+[class*="option--is-focused"] {
+  background: var(--bg-input) !important;
+  color: white !important;
+}
+
+[class*="option--is-selected"] {
+  background: var(--green-lo) !important;
+  color: white !important;
+}
+
+[class$="-singleValue"],
+[class*="-singleValue"],
+[class$="-placeholder"],
+[class*="-placeholder"] {
+  color: var(--text) !important;
+  font-size: 14px !important;
+}
+
+[class$="-indicatorSeparator"] {
+  background: var(--border) !important;
+}
+
+[class$="-dropdownIndicator"] svg,
+[class*="-dropdownIndicator"] svg {
+  fill: var(--text-dim) !important;
+}
+
+/* ══════════════════════════════════════════════════
+   CARDS / PANELS
+══════════════════════════════════════════════════ */
+[data-css$="-show"],
+[data-css$="-edit"],
+[data-css$="-new"],
+[data-css$="-filter"] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════════════ */
+[data-css="login"],
+section[data-css="login"] {
+  background: var(--bg-mid) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7) !important;
+  border-radius: 0 !important;
+}
+
+[data-css="login-wrapper"],
+section[data-css="login-wrapper"] {
+  background: var(--bg) !important;
+}
+
+/* ══════════════════════════════════════════════════
+   NOTIFICACIONES / TOASTS
+══════════════════════════════════════════════════ */
+[data-css="notice-success"] {
+  background: var(--green-lo) !important;
+  border-left: 4px solid var(--green-hi) !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+[data-css="notice-error"] {
+  background: var(--danger) !important;
+  border-left: 4px solid var(--danger-hi) !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════
+   PAGINACIÓN
+══════════════════════════════════════════════════ */
+[data-css="pagination"] button,
+[data-css*="page"] button {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-dim) !important;
+  min-width: 32px !important;
+  height: 32px !important;
+}
+
+[data-css="pagination"] button:hover {
+  border-color: var(--green-hi) !important;
+  color: var(--text) !important;
+}
+
+[data-css="pagination"] button[class*="active"] {
+  background: var(--green-lo) !important;
+  border-color: var(--green-hi) !important;
+  color: white !important;
+}
+
+/* ══════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--green-hi); }
+
+/* ══════════════════════════════════════════════════
    TEXTOS GENERALES
-════════════════════════════════════════ */
-p, span, a, li, div {
+══════════════════════════════════════════════════ */
+p, span, div, li {
   color: var(--text);
 }
 
-a:hover {
-  color: white !important;
-}
+a { color: var(--text-dim) !important; }
+a:hover { color: var(--text) !important; }
+
+/* Quitar azules de AdminJS por defecto */
+* { --admin-primary: var(--green-hi) !important; }
