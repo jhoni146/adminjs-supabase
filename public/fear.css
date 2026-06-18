@@ -138,40 +138,53 @@ section[data-css="top-bar"] {
 }
 
 /* ══════════════════════════════════════════════════
-   BREADCRUMB Y TÍTULOS
+   TEXTOS FUERA DE TABLAS — área de contenido claro
 ══════════════════════════════════════════════════ */
+
+/* Título LISTA, CREAR NUEVO, etc */
 h1, h2, h3, h4 {
   text-transform: uppercase !important;
   letter-spacing: 0.12em !important;
   font-weight: 700 !important;
-  color: var(--text) !important;
+  color: #1e3010 !important;
 }
 
-h1 { font-size: 22px !important; }
-h2 { font-size: 18px !important; }
-
-/* Breadcrumb */
+/* Breadcrumb: Panel / Reclutas */
+nav a, nav span,
 nav[aria-label="breadcrumb"] a,
 nav[aria-label="breadcrumb"] span,
 [data-css="breadcrumbs"] a,
 [data-css="breadcrumbs"] span,
-[data-css="breadcrumbs"],
-nav a, nav span {
-  color: var(--text-dim) !important;
+[data-css="breadcrumbs"] {
+  color: var(--green-lo) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   letter-spacing: 0.06em !important;
 }
 
-nav[aria-label="breadcrumb"] a:hover,
-[data-css="breadcrumbs"] a:hover {
-  color: var(--text) !important;
+/* Badge con número de registros ej: [17] */
+[class*="Badge"],
+[class*="badge"],
+span[class*="badge"] {
+  background: var(--green-lo) !important;
+  color: white !important;
+  border-radius: 0 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
 }
 
-/* Separador / entre breadcrumbs */
-nav[aria-label="breadcrumb"] span[aria-hidden],
-[data-css="breadcrumbs"] span {
-  color: var(--text-muted) !important;
+/* Botones Crear nuevo y Filtrar fuera de tabla */
+button, a[href*="new"] {
+  color: #1e3010 !important;
+  border-color: var(--green-lo) !important;
+  font-weight: 700 !important;
+}
+
+/* Texto "Español", email usuario en topbar */
+[data-css="top-bar"] *,
+header * {
+  color: #1e3010 !important;
 }
 
 /* ══════════════════════════════════════════════════
@@ -371,15 +384,40 @@ label {
 }
 
 /* ══════════════════════════════════════════════════
-   CARDS / PANELS
+   CARDS / PANELS - fondo claro, textos oscuros
 ══════════════════════════════════════════════════ */
-[data-css$="-show"],
-[data-css$="-edit"],
-[data-css$="-new"],
-[data-css$="-filter"] {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
+
+/* Labels de campos */
+[data-css$="-show"] label,
+[data-css$="-edit"] label,
+[data-css$="-new"] label {
+  color: var(--green-lo) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+}
+
+/* Valores de campos */
+[data-css$="-show"] p,
+[data-css$="-show"] span,
+[data-css$="-show"] div,
+[data-css$="-show"] a {
+  color: #1e3010 !important;
+}
+
+/* Títulos h1/h2 en vista show */
+[data-css$="-show"] h1,
+[data-css$="-show"] h2,
+[data-css$="-show"] h3 {
+  color: #1e3010 !important;
+}
+
+/* Breadcrumb sobre fondo claro */
+nav a, nav span {
+  color: var(--green-lo) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
 }
 
 /* ══════════════════════════════════════════════════
