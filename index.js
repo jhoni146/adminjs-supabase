@@ -33,6 +33,11 @@ const GlobalStyleComponent = componentLoader.add(
   path.join(__dirname, 'adminjs/components/empty.js')
 );
 
+const DashboardComponent = componentLoader.add(
+  'Dashboard',
+  path.join(__dirname, 'adminjs/components/dashboard.jsx')
+);
+
 const app = express();
 app.set('trust proxy', 1);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -281,6 +286,10 @@ function formatearVotos(votos) {
 // ─────────────────────────────────────────────────────────────────
 const adminJs = new AdminJS({
   componentLoader,
+
+  dashboard: {
+    component: DashboardComponent,
+  },
 
   assets: {
     styles: ['/fear.css'],

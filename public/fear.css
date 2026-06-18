@@ -440,3 +440,54 @@ section[data-css$="-show-drawer-content"] .adminjs_Label {
   letter-spacing: 0.15em !important;
   text-transform: uppercase !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX INPUTS EN FORMULARIOS NEW/EDIT
+   El fondo oscuro hace invisible el texto al escribir
+══════════════════════════════════════════════════ */
+
+/* Contenedor new/edit — fondo oscuro como el show */
+section[data-css$="-new-drawer-content"],
+section[data-css$="-new-drawer-content"] *,
+section[data-css$="-edit-drawer-content"],
+section[data-css$="-edit-drawer-content"] * {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+/* Labels dorado en new/edit */
+section[data-css$="-new-drawer-content"] label,
+section[data-css$="-new-drawer-content"] .adminjs_Label,
+section[data-css$="-edit-drawer-content"] label,
+section[data-css$="-edit-drawer-content"] .adminjs_Label {
+  color: var(--gold) !important;
+  background: transparent !important;
+}
+
+/* Inputs con fondo oscuro y texto blanco visible */
+section[data-css$="-new-drawer-content"] input,
+section[data-css$="-new-drawer-content"] textarea,
+section[data-css$="-new-drawer-content"] select,
+section[data-css$="-edit-drawer-content"] input,
+section[data-css$="-edit-drawer-content"] textarea,
+section[data-css$="-edit-drawer-content"] select {
+  background: var(--bg-input) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border-hi) !important;
+  caret-color: var(--gold) !important;
+}
+
+/* Botón guardar en rojo */
+section[data-css$="-new-drawer-content"] button[type="submit"],
+section[data-css$="-edit-drawer-content"] button[type="submit"],
+section[data-css$="-new-drawer-content"] button:last-of-type,
+section[data-css$="-edit-drawer-content"] button:last-of-type {
+  background: var(--red-dim) !important;
+  border: 1px solid var(--red) !important;
+  color: white !important;
+}
+
+section[data-css$="-new-drawer-content"] button[type="submit"]:hover,
+section[data-css$="-edit-drawer-content"] button[type="submit"]:hover {
+  background: var(--red) !important;
+}
