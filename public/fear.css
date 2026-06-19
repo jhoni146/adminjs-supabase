@@ -716,14 +716,8 @@ section[style*="cursor: pointer"] span {
   color: #1a1a1a !important;
 }
 
-/* ══════════════════════════════════════════════════
-   FIX: sidebar móvil debe estar por encima del dashboard overlay
-   z-index solo funciona con position definido
-══════════════════════════════════════════════════ */
-section[data-css="sidebar"] {
-  position: fixed !important;
-  z-index: 9999 !important;
-}
+/* (Regla de z-index del sidebar eliminada — ya no es necesaria,
+   el MutationObserver en dashboard.js gestiona la visibilidad) */
 
 /* ══════════════════════════════════════════════════
    ICONO "MENU" DENTRO DEL SIDEBAR — fondo oscuro, icono claro
