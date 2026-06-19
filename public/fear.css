@@ -718,9 +718,9 @@ section[style*="cursor: pointer"] span {
 
 /* ══════════════════════════════════════════════════
    FIX: sidebar móvil debe estar por encima del dashboard overlay
+   z-index solo funciona con position definido
 ══════════════════════════════════════════════════ */
-section[data-css="sidebar"],
-section[data-css="sidebar"].visible,
-html body section[data-css="sidebar"] {
+section[data-css="sidebar"] {
+  position: fixed !important;
   z-index: 9999 !important;
 }
