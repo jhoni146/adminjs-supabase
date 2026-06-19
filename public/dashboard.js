@@ -37,7 +37,7 @@
       right: 0;
       bottom: 0;
       background: #111;
-      z-index: 10;
+      z-index: 1;
       overflow-y: auto;
       font-family: 'Barlow Condensed', sans-serif;
       color: #fff;
@@ -75,6 +75,17 @@
     `;
 
     document.body.appendChild(overlay);
+
+    // Ocultar el overlay automáticamente si se abre el menú lateral móvil
+    const sidebarEl = document.querySelector('[data-css="sidebar"]');
+    if (sidebarEl) {
+      const obs = new MutationObserver(() => {
+        const isOpen = sidebarEl.classList.contains('visible');
+        const ov = document.getElementById('fear-dashboard-overlay');
+        if (ov) ov.style.display = isOpen ? 'none' : 'block';
+      });
+      obs.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
+    }
   }
 
   function tryInject() {
