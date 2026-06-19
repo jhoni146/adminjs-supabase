@@ -715,3 +715,10 @@ section[style*="cursor: pointer"] .adminjs_Icon,
 section[style*="cursor: pointer"] span {
   color: #1a1a1a !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX: sidebar móvil debe estar por encima del dashboard overlay
+══════════════════════════════════════════════════ */
+[data-css="sidebar"] {
+  z-index: 200 !important;
+}
