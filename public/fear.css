@@ -669,3 +669,49 @@ html body div[class*="singleValue"] {
 [data-css="top-bar"] section[style*="cursor: pointer"] svg {
   stroke: #1a1a1a !important;
 }
+
+/* ══════════════════════════════════════════════════
+   FIX AGRESIVO: botón hamburguesa / menú móvil
+   Cubre todos los posibles contenedores
+══════════════════════════════════════════════════ */
+section[display*="none"] svg,
+section[style*="cursor: pointer"] svg path,
+section[style*="cursor: pointer"] svg line,
+section[style*="cursor:pointer"] svg path,
+section[style*="cursor:pointer"] svg line,
+.adminjs_Icon svg,
+.adminjs_Icon svg line,
+.adminjs_Icon svg path {
+  stroke: #1a1a1a !important;
+  color: #1a1a1a !important;
+}
+
+/* Por si el SVG usa fill en vez de stroke */
+section[style*="cursor: pointer"] svg *,
+.adminjs_Icon svg * {
+  stroke: #1a1a1a !important;
+}
+
+/* ══════════════════════════════════════════════════
+   FIX DEFINITIVO: icono hamburguesa
+   stroke="inherit" en el SVG hereda el "color" CSS
+   del span.adminjs_Icon padre — hay que forzar AHÍ
+══════════════════════════════════════════════════ */
+[data-css="top-bar"] .adminjs_Icon {
+  color: #1a1a1a !important;
+}
+
+/* ══════════════════════════════════════════════════
+   FIX DEFINITIVO v2: icono hamburguesa sin restricción de padre
+══════════════════════════════════════════════════ */
+.adminjs_Icon,
+span.adminjs_Icon,
+.sc-kFuwaP {
+  color: #1a1a1a !important;
+}
+
+/* Selector por estructura: section con cursor:pointer que contiene el icono */
+section[style*="cursor: pointer"] .adminjs_Icon,
+section[style*="cursor: pointer"] span {
+  color: #1a1a1a !important;
+}
