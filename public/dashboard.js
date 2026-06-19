@@ -53,7 +53,7 @@
         <img src="https://i.ibb.co/qM7GkTsq/fear5N12.png" style="width:64px;height:64px;object-fit:contain;" />
         <div>
           <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px;">Fuerza Española de Acción Rápida</div>
-          <h1 style="color:#ffffff;font-size:30px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin:0;text-shadow:0 0 1px rgba(255,255,255,0.3);">CLAN <span style="color:#e02020;">F.E.A.R</span></h1>
+          <h1 style="color:#ffffff !important;font-size:30px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin:0;">CLAN <span style="color:#e02020 !important;">F.E.A.R</span></h1>
           <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;">Simulación Militar · Arma Reforger · España</div>
         </div>
       </div>
