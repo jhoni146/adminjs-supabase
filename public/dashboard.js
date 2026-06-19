@@ -23,8 +23,10 @@
     const sidebar = document.querySelector('[data-css="sidebar"]') || document.querySelector('nav');
     const isMobile = window.innerWidth < 768;
     const sidebarWidth = (!isMobile && sidebar) ? sidebar.offsetWidth : 0;
-    const topbar = document.querySelector('[data-css="top-bar"]');
-    const topbarHeight = topbar ? topbar.offsetHeight : 0;
+    const topbar = document.querySelector('[data-css="top-bar"]')
+                || document.querySelector('header')
+                || document.querySelector('[data-css*="top"]');
+    const topbarHeight = topbar ? topbar.getBoundingClientRect().height : (isMobile ? 64 : 0);
 
     const overlay = document.createElement('div');
     overlay.id = 'fear-dashboard-overlay';
@@ -50,12 +52,12 @@
       <div style="display:flex;align-items:center;gap:20px;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid #2a2a2a;">
         <img src="https://i.ibb.co/qM7GkTsq/fear5N12.png" style="width:64px;height:64px;object-fit:contain;" />
         <div>
-          <div style="color:#444;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px;">Fuerza Española de Acción Rápida</div>
+          <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px;">Fuerza Española de Acción Rápida</div>
           <h1 style="color:#fff;font-size:30px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:0;">CLAN <span style="color:#e02020;">F.E.A.R</span></h1>
-          <div style="color:#444;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;">Simulación Militar · Arma Reforger · España</div>
+          <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;">Simulación Militar · Arma Reforger · España</div>
         </div>
       </div>
-      <div style="color:#444;font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;">── Estadísticas del clan</div>
+      <div style="color:#888;font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;">── Estadísticas del clan</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
         ${cards.map(c => `
           <a href="${c.href}" style="text-decoration:none;" onclick="document.getElementById('fear-dashboard-overlay').remove()">
