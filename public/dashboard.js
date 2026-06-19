@@ -53,7 +53,7 @@
         <img src="https://i.ibb.co/qM7GkTsq/fear5N12.png" style="width:64px;height:64px;object-fit:contain;" />
         <div>
           <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px;">Fuerza Española de Acción Rápida</div>
-          <h1 style="color:#fff;font-size:30px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:0;">CLAN <span style="color:#e02020;">F.E.A.R</span></h1>
+          <h1 style="color:#ffffff;font-size:30px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin:0;text-shadow:0 0 1px rgba(255,255,255,0.3);">CLAN <span style="color:#e02020;">F.E.A.R</span></h1>
           <div style="color:#888;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;">Simulación Militar · Arma Reforger · España</div>
         </div>
       </div>
@@ -77,14 +77,17 @@
     document.body.appendChild(overlay);
 
     // Ocultar el overlay automáticamente si se abre el menú lateral móvil
-    const sidebarEl = document.querySelector('[data-css="sidebar"]');
-    if (sidebarEl) {
-      const obs = new MutationObserver(() => {
-        const isOpen = sidebarEl.classList.contains('visible');
-        const ov = document.getElementById('fear-dashboard-overlay');
-        if (ov) ov.style.display = isOpen ? 'none' : 'block';
-      });
-      obs.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
+    // SOLO aplica en móvil — en escritorio el sidebar siempre tiene "visible"
+    if (isMobile) {
+      const sidebarEl = document.querySelector('[data-css="sidebar"]');
+      if (sidebarEl) {
+        const obs = new MutationObserver(() => {
+          const isOpen = sidebarEl.classList.contains('visible');
+          const ov = document.getElementById('fear-dashboard-overlay');
+          if (ov) ov.style.display = isOpen ? 'none' : 'block';
+        });
+        obs.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
+      }
     }
   }
 

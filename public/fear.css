@@ -724,3 +724,10 @@ section[data-css="sidebar"] {
   position: fixed !important;
   z-index: 9999 !important;
 }
+
+/* ══════════════════════════════════════════════════
+   ICONO "MENU" DENTRO DEL SIDEBAR — fondo oscuro, icono claro
+══════════════════════════════════════════════════ */
+[data-css="sidebar"] .adminjs_Icon {
+  color: var(--text) !important;
+}
