@@ -21,7 +21,8 @@
 
     // Esperar a que exista el sidebar para calcular su ancho
     const sidebar = document.querySelector('[data-css="sidebar"]') || document.querySelector('nav');
-    const sidebarWidth = sidebar ? sidebar.offsetWidth : 280;
+    const isMobile = window.innerWidth < 768;
+    const sidebarWidth = (!isMobile && sidebar) ? sidebar.offsetWidth : 0;
 
     const overlay = document.createElement('div');
     overlay.id = 'fear-dashboard-overlay';
@@ -36,9 +37,12 @@
       overflow-y: auto;
       font-family: 'Barlow Condensed', sans-serif;
       color: #fff;
-      padding: 40px 48px;
+      padding: ${isMobile ? '20px 16px' : '40px 48px'};
       box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 0.15s ease;
     `;
+    setTimeout(() => { overlay.style.opacity = '1'; }, 50);
 
     overlay.innerHTML = `
       <div style="display:flex;align-items:center;gap:20px;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid #2a2a2a;">
