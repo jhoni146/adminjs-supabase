@@ -656,3 +656,16 @@ html body div[class*="singleValue"] {
    DASHBOARD INJECTION via JS
    Se ejecuta solo en la página /admin (dashboard)
 ══════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════
+   BOTÓN MENÚ HAMBURGUESA (móvil) — topbar
+══════════════════════════════════════════════════ */
+[data-css="top-bar"] svg,
+[data-css="top-bar"] svg line,
+[data-css="top-bar"] section svg {
+  stroke: #1a1a1a !important;
+}
+
+[data-css="top-bar"] section[style*="cursor: pointer"] svg {
+  stroke: #1a1a1a !important;
+}

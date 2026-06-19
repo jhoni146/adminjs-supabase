@@ -23,17 +23,19 @@
     const sidebar = document.querySelector('[data-css="sidebar"]') || document.querySelector('nav');
     const isMobile = window.innerWidth < 768;
     const sidebarWidth = (!isMobile && sidebar) ? sidebar.offsetWidth : 0;
+    const topbar = document.querySelector('[data-css="top-bar"]');
+    const topbarHeight = topbar ? topbar.offsetHeight : 0;
 
     const overlay = document.createElement('div');
     overlay.id = 'fear-dashboard-overlay';
     overlay.style.cssText = `
       position: fixed;
-      top: 0;
+      top: ${topbarHeight}px;
       left: ${sidebarWidth}px;
       right: 0;
       bottom: 0;
       background: #111;
-      z-index: 100;
+      z-index: 10;
       overflow-y: auto;
       font-family: 'Barlow Condensed', sans-serif;
       color: #fff;
