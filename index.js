@@ -400,10 +400,10 @@ const adminJs = new AdminJS({
             guard: '¿Marcar estas mensualidades como pagadas?',
             component: false,
             handler: async (request, response, context) => {
-              const { records } = context;
+              const { records, h } = context;
               for (const record of records) await record.update({ pagado: true });
               return {
-                redirectUrl: `${context.h.resourceUrl()}?refresh=${Date.now()}`,
+                records: records.map(r => r.toJSON()),
                 notice: { message: `Se marcaron ${records.length} mensualidades como pagadas`, type: 'success' },
               };
             }
