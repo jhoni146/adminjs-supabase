@@ -179,11 +179,13 @@ function iniciarSchedulerVotaciones() {
   }
 
   setTimeout(async () => {
-    console.log('⏰ [Scheduler] Comprobación diaria de votaciones...');
+    console.log('⏰ [Scheduler] Comprobación diaria...');
+    await generarMensualidadesAutomaticas();
     await generarVotacionesAutomaticas();
 
     setInterval(async () => {
-      console.log('⏰ [Scheduler] Comprobación diaria de votaciones...');
+      console.log('⏰ [Scheduler] Comprobación diaria...');
+      await generarMensualidadesAutomaticas();
       await generarVotacionesAutomaticas();
     }, 24 * 60 * 60 * 1000);
 
